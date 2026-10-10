@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Mic, ListOrdered } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -18,10 +18,14 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Category, Transaction } from "@prisma/client";
 import { TransactionWithCategory } from "@/actions/transaction";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { TransactionForm } from "./transaction-form";
+import { QuickVoiceAdd } from "./quick-voice-add";
+import { TAB_LIST, TAB_TRIGGER } from "@/lib/tab-styles";
+import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
 interface AddTransactionProps {
@@ -38,6 +42,44 @@ interface AddTransactionProps {
  */
 const triggerClass =
   "hidden h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-sm border border-(--pf-expense) bg-(--pf-expense) text-(--pf-on-signal) transition-opacity hover:opacity-90 lg:flex";
+
+/**
+ * Nội dung dialog: giao dịch mới có 2 tab (Ghi nhanh bằng preset + giọng nói
+ * là mặc định, Chi tiết là form đầy đủ cũ). Sửa giao dịch thì chỉ hiện form.
+ * Đặt ngoài AddTransaction để không remount mất state tab mỗi lần parent render.
+ */
+function AddTransactionBody({
+  categories,
+  initialData,
+  onSuccess,
+}: {
+  categories: Category[];
+  initialData?: Transaction | TransactionWithCategory | null;
+  onSuccess: () => void;
+}) {
+  const [tab, setTab] = useState("quick");
+  if (initialData) {
+    return <TransactionForm categories={categories} initialData={initialData} onSuccess={onSuccess} />;
+  }
+  return (
+    <Tabs value={tab} onValueChange={setTab} className="gap-4">
+      <TabsList className={cn(TAB_LIST, "grid w-full grid-cols-2")}>
+        <TabsTrigger value="quick" className={TAB_TRIGGER}>
+          <Mic className="mr-1.5 h-3.5 w-3.5" /> Ghi nhanh
+        </TabsTrigger>
+        <TabsTrigger value="detail" className={TAB_TRIGGER}>
+          <ListOrdered className="mr-1.5 h-3.5 w-3.5" /> Chi tiết
+        </TabsTrigger>
+      </TabsList>
+      <TabsContent value="quick" className="mt-0">
+        <QuickVoiceAdd categories={categories} onTransactionAdded={onSuccess} />
+      </TabsContent>
+      <TabsContent value="detail" className="mt-0">
+        <TransactionForm categories={categories} initialData={initialData} onSuccess={onSuccess} />
+      </TabsContent>
+    </Tabs>
+  );
+}
 
 export function AddTransaction({ categories, initialData, open: controlledOpen, onOpenChange: setControlledOpen, onTransactionAdded }: AddTransactionProps) {
   const [internalOpen, setInternalOpen] = useState(false);
@@ -94,10 +136,10 @@ export function AddTransaction({ categories, initialData, open: controlledOpen, 
           <DialogHeader>
             <DialogTitle>{initialData ? "Sửa giao dịch" : "Ghi giao dịch"}</DialogTitle>
             <DialogDescription>
-              {initialData ? "Sửa lại thông tin của khoản này." : "Chọn tiền ra hay tiền vào, rồi nhập số tiền."}
+              {initialData ? "Sửa lại thông tin của khoản này." : "Bấm nút preset rồi nói số tiền — hoặc dùng form chi tiết."}
             </DialogDescription>
           </DialogHeader>
-          <TransactionForm categories={categories} initialData={initialData} onSuccess={onSuccess} />
+          <AddTransactionBody categories={categories} initialData={initialData} onSuccess={onSuccess} />
         </DialogContent>
       </Dialog>
     );
@@ -124,10 +166,10 @@ export function AddTransaction({ categories, initialData, open: controlledOpen, 
         <SheetHeader className="px-0">
           <SheetTitle>{initialData ? "Sửa giao dịch" : "Ghi giao dịch"}</SheetTitle>
           <SheetDescription>
-            {initialData ? "Sửa lại thông tin của khoản này." : "Chọn tiền ra hay tiền vào, rồi nhập số tiền."}
+            {initialData ? "Sửa lại thông tin của khoản này." : "Bấm nút preset rồi nói số tiền — hoặc dùng form chi tiết."}
           </SheetDescription>
         </SheetHeader>
-        <TransactionForm categories={categories} initialData={initialData} onSuccess={onSuccess} />
+        <AddTransactionBody categories={categories} initialData={initialData} onSuccess={onSuccess} />
       </SheetContent>
     </Sheet>
   );

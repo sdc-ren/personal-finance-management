@@ -23,6 +23,7 @@ model User {
   role          Role      @default(MEMBER)
   transactions  Transaction[]
   budgets       Budget[]
+  quickPresets  QuickPreset[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
@@ -63,6 +64,7 @@ model Category {
   familyId    String?
   transactions Transaction[]
   budgets     Budget[]
+  quickPresets QuickPreset[]
 }
 
 model Budget {
@@ -94,4 +96,24 @@ enum TransactionType {
 enum PaymentMethod {
   CASH
   TRANSFER
+}
+
+// Nút ghi nhanh: mỗi preset là một "phím tắt" cho một loại chi/thu thường gặp
+// (Ăn sáng, Đổ xăng, Tiền điện...). Bấm preset -> nhập số tiền bằng giọng nói
+// hoặc gõ tay -> lưu, không cần đi qua form dài.
+model QuickPreset {
+  id            String        @id @default(uuid())
+  label         String
+  type          TransactionType @default(EXPENSE)
+  category      Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId    String
+  paymentMethod PaymentMethod @default(CASH)
+  icon          String        @default("zap")
+  sortOrder     Int           @default(0)
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([userId, sortOrder])
 }

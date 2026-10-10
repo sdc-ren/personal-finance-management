@@ -4,10 +4,12 @@ import { redirect } from "next/navigation";
 import { getCategories } from "@/actions/transaction";
 import { getBudgetProgress } from "@/actions/budget";
 import { getSystemCategories } from "@/actions/admin";
+import { getQuickPresets } from "@/actions/quick-preset";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Panel, SteelGrid, Readout } from "@/components/ui/panel";
 import { BudgetList } from "@/components/budget/budget-list";
 import { CategoryClient } from "@/components/admin/category-client";
+import { QuickPresetManager } from "@/components/settings/quick-preset-manager";
 import { WorkspaceLayout } from "@/components/layout/workspace-layout";
 import { TAB_LIST, TAB_TRIGGER } from "@/lib/tab-styles";
 import { cn } from "@/lib/utils";
@@ -27,10 +29,11 @@ export default async function SettingsPage({
 
   const isAdmin = session.user.role === "ADMIN";
 
-  const [categories, budgetProgress, systemCategories] = await Promise.all([
+  const [categories, budgetProgress, systemCategories, quickPresets] = await Promise.all([
     getCategories(),
     getBudgetProgress(),
     isAdmin ? getSystemCategories() : Promise.resolve([]),
+    getQuickPresets(),
   ]);
 
   const resolvedSearchParams = await searchParams;
@@ -45,6 +48,9 @@ export default async function SettingsPage({
           </TabsTrigger>
           <TabsTrigger value="budget" className={TAB_TRIGGER}>
             Ngân sách
+          </TabsTrigger>
+          <TabsTrigger value="quick-add" className={TAB_TRIGGER}>
+            Nút ghi nhanh
           </TabsTrigger>
           {isAdmin && (
             <TabsTrigger value="categories" className={TAB_TRIGGER}>
@@ -69,6 +75,12 @@ export default async function SettingsPage({
 
         <TabsContent value="budget">
           <BudgetList initialBudgets={budgetProgress} categories={categories} />
+        </TabsContent>
+
+        <TabsContent value="quick-add">
+          <Panel plaque="Nút ghi nhanh" className="p-4 sm:p-5">
+            <QuickPresetManager categories={categories} initialPresets={quickPresets} />
+          </Panel>
         </TabsContent>
 
         {isAdmin && (
