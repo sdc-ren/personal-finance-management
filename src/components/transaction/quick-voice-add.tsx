@@ -109,6 +109,7 @@ interface QuickVoiceAddProps {
  */
 export function QuickVoiceAdd({ categories, onTransactionAdded }: QuickVoiceAddProps) {
   const [presets, setPresets] = useState<QuickPresetWithCategory[] | null>(null);
+  const [presetsError, setPresetsError] = useState(false);
   const [type, setType] = useState<"EXPENSE" | "INCOME">("EXPENSE");
   const [selected, setSelected] = useState<QuickPresetWithCategory | null>(null);
   const [manualMode, setManualMode] = useState(false);
@@ -118,12 +119,19 @@ export function QuickVoiceAdd({ categories, onTransactionAdded }: QuickVoiceAddP
 
   const voice = useVoiceInput({ lang: "vi-VN" });
 
-  // Nạp preset 1 lần khi mở
+  // Nạp preset 1 lần khi mở — có catch để lỗi DB không treo skeleton mãi
   useEffect(() => {
     let cancelled = false;
-    getQuickPresets().then((list) => {
-      if (!cancelled) setPresets(list);
-    });
+    getQuickPresets()
+      .then((list) => {
+        if (!cancelled) setPresets(list);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setPresetsError(true);
+          setPresets([]);
+        }
+      });
     return () => {
       cancelled = true;
     };
@@ -242,7 +250,9 @@ export function QuickVoiceAdd({ categories, onTransactionAdded }: QuickVoiceAddP
           </div>
         ) : filtered.length === 0 ? (
           <p className="py-8 text-center text-sm text-muted-foreground">
-            Chưa có nút nào. Thêm ở Cài đặt → Nút ghi nhanh.
+            {presetsError
+              ? "Không tải được nút ghi nhanh. Kiểm tra lại kết nối rồi thử lại."
+              : "Chưa có nút nào. Thêm ở Cài đặt → Nút ghi nhanh."}
           </p>
         ) : (
           <div className="grid grid-cols-3 gap-2">

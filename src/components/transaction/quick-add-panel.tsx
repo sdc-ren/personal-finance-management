@@ -36,14 +36,22 @@ export function QuickAddPanel({
   id = "quick-add-panel",
 }: QuickAddPanelProps) {
   const [presets, setPresets] = useState<QuickPresetWithCategory[] | null>(null);
+  const [presetsError, setPresetsError] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [activeDay, setActiveDay] = useState<(typeof DAY_OPTIONS)[number]>("Hôm nay");
 
   useEffect(() => {
     let cancelled = false;
-    getQuickPresets().then((list) => {
-      if (!cancelled) setPresets(list);
-    });
+    getQuickPresets()
+      .then((list) => {
+        if (!cancelled) setPresets(list);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setPresetsError(true);
+          setPresets([]);
+        }
+      });
     return () => {
       cancelled = true;
     };
@@ -77,7 +85,9 @@ export function QuickAddPanel({
             onClick={openDialog}
             className="cursor-pointer rounded-xl border border-dashed border-border px-3 py-6 text-center text-sm text-muted-foreground transition-colors hover:bg-accent"
           >
-            Bấm để ghi khoản đầu tiên
+            {presetsError
+              ? "Không tải được nút ghi nhanh — bấm để thử lại"
+              : "Bấm để ghi khoản đầu tiên"}
           </button>
         ) : (
           <div className="grid grid-cols-3 gap-2">
