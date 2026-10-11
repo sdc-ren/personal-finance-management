@@ -70,7 +70,8 @@ const PRESET_ICONS: Record<string, LucideIcon> = {
   star: Star,
 };
 
-function presetIcon(key: string): LucideIcon {
+/** Map icon key (lưu trong DB) -> component lucide. Export để panel Ghi nhanh dùng chung. */
+export function presetIcon(key: string): LucideIcon {
   return PRESET_ICONS[key] || Zap;
 }
 

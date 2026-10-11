@@ -82,18 +82,23 @@ export function KpiRow({
   );
 }
 
-type ContentGridLayout = "8-4" | "6-6";
+type ContentGridLayout = "8-4" | "6-6" | "fluid-326";
 
 /**
- * Lưới nội dung 12 cột: mobile xếp chồng 1 cột, desktop theo layout.
- * - "8-4" (mặc định): cột chính 8, cột phụ 4.
- * - "6-6": hai cột bằng nhau.
+ * Lưới nội dung: mobile xếp chồng 1 cột, desktop theo layout.
+ * - "8-4" (mặc định): 12 cột, cột chính 8, cột phụ 4.
+ * - "6-6": 12 cột, hai cột bằng nhau.
+ * - "fluid-326": `minmax(0,1fr) 326px` — cột phụ rộng cố định 326px
+ *   (đúng cấu trúc bản preview màn Tổng quan).
  * - Không có `side`: cột chính full width.
+ * - `sideSticky`: cột phụ dính khi cuộn (`top: 18px`), dùng cho panel
+ *   Ghi nhanh trên desktop.
  */
 export function ContentGrid({
   main,
   side,
   layout = "8-4",
+  sideSticky = false,
   className,
   mainClassName,
   sideClassName,
@@ -101,10 +106,12 @@ export function ContentGrid({
   main: ReactNode;
   side?: ReactNode;
   layout?: ContentGridLayout;
+  sideSticky?: boolean;
   className?: string;
   mainClassName?: string;
   sideClassName?: string;
 }) {
+  const isFluid = layout === "fluid-326";
   const mainSpan =
     !side || layout === "6-6" ? "lg:col-span-12" : "lg:col-span-8";
   const sideSpan = layout === "6-6" ? "lg:col-span-6" : "lg:col-span-4";
@@ -112,16 +119,20 @@ export function ContentGrid({
   return (
     <div
       className={cn(
-        "grid min-h-0 grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-5",
+        "grid min-h-0 grid-cols-1 gap-4 lg:gap-5",
+        isFluid ? "lg:grid-cols-[minmax(0,1fr)_326px]" : "lg:grid-cols-12",
         className
       )}
     >
-      <div className={cn("min-w-0", mainSpan, mainClassName)}>{main}</div>
+      <div className={cn("min-w-0", !isFluid && mainSpan, mainClassName)}>
+        {main}
+      </div>
       {side ? (
         <div
           className={cn(
             "flex min-w-0 flex-col gap-4 lg:gap-5",
-            sideSpan,
+            !isFluid && sideSpan,
+            sideSticky && "lg:sticky lg:top-[18px] lg:self-start",
             sideClassName
           )}
         >
@@ -130,17 +141,6 @@ export function ContentGrid({
       ) : null}
     </div>
   );
-}
-
-/** Khu vực Ghi nhanh: luôn nổi bật trên cùng (desktop), shrink-0 giữ layout. */
-export function QuickAddZone({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  return <div className={cn("shrink-0", className)}>{children}</div>;
 }
 
 /**

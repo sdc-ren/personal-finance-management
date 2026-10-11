@@ -72,7 +72,7 @@ export function SpendingPieChart({ data }: SpendingPieChartProps) {
   }
 
   return (
-    <SectionCard title="Phân bổ chi tiêu">
+    <SectionCard title="Chi tiêu theo nhóm">
       <div className="flex flex-col gap-6">
         <div className="relative flex h-[220px] w-full justify-center [&_:focus]:outline-none">
           <ResponsiveContainer width="100%" height="100%">
