@@ -41,7 +41,7 @@ interface AddTransactionProps {
  * hành động cùng lúc là phá Luật một nguồn sáng.
  */
 const triggerClass =
-  "hidden h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-sm border border-(--pf-expense) bg-(--pf-expense) text-(--pf-on-signal) transition-opacity hover:opacity-90 lg:flex";
+  "hidden h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-(--primary) bg-(--primary) text-white transition-opacity hover:opacity-90 lg:flex";
 
 /**
  * Nội dung dialog: giao dịch mới có 2 tab (Ghi nhanh bằng preset + giọng nói
