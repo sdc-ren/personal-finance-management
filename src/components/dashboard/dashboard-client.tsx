@@ -19,7 +19,7 @@ import { SpendingPieChart } from "./spending-pie-chart";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TransactionFilters } from "@/components/transaction/transaction-filters";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
+import { Page, KpiRow, ContentGrid, QuickAddZone, ToolbarRow } from "@/components/ui/page";
 
 // Match TransactionList requirements
 import { TransactionWithCategory } from "@/actions/transaction";
@@ -130,10 +130,17 @@ export function DashboardClient({ categories, transactions, stats, familyMembers
 
   return (
     <>
-      <div className="h-full w-full">
-        <div className="flex h-full min-h-0 flex-col gap-4 overflow-y-auto lg:gap-5 lg:overflow-hidden">
-          {/* Hàng KPI: 3 thẻ chỉ số trên cùng */}
-          <div className="grid shrink-0 grid-cols-1 gap-4 sm:grid-cols-3">
+      <Page className="h-full min-h-0 overflow-y-auto lg:overflow-hidden">
+        {/* Ghi nhanh: nổi bật trên cùng (theo mockup đã duyệt) */}
+        <QuickAddZone>
+          <AddTransaction
+            categories={categories}
+            onTransactionAdded={handleTransactionAdded}
+          />
+        </QuickAddZone>
+
+        {/* Hàng KPI */}
+        <KpiRow>
             <StatCard
               label="Thu nhập tháng"
               tone="var(--pf-ok-ink)"
@@ -153,25 +160,15 @@ export function DashboardClient({ categories, transactions, stats, familyMembers
               label="Còn lại"
               value={formatCurrency(stats.income - stats.expense)}
             />
-          </div>
+        </KpiRow>
 
-          {/* Ghi nhanh: nút hành động chính, nổi bật phía trên */}
-          <div className="shrink-0">
-            <AddTransaction
-              categories={categories}
-              onTransactionAdded={handleTransactionAdded}
-            />
-          </div>
-
-          {/* Lưới nội dung */}
-          <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-5">
-            <section
-              className={cn(
-                "flex min-h-0 flex-col",
-                showInsightsDesktop ? "lg:col-span-8" : "lg:col-span-12"
-              )}
-            >
-              <SectionCard
+        {/* Lưới nội dung: cột chính giao dịch, cột phụ insights + phân bổ */}
+        <ContentGrid
+          className="flex-1"
+          mainClassName="flex min-h-0 flex-col"
+          sideClassName="hidden lg:flex lg:overflow-y-auto"
+          main={
+            <SectionCard
                 title="Giao dịch tháng hiện tại"
                 className="flex min-h-0 flex-1 flex-col"
                 contentClassName="flex min-h-0 flex-1 flex-col"
@@ -210,7 +207,7 @@ export function DashboardClient({ categories, transactions, stats, familyMembers
                 {familyMembers.length > 0 ? (
                   <Tabs defaultValue={scope} onValueChange={handleTabChange} className="flex-1 flex flex-col min-h-0 gap-4">
                     <div className="flex flex-col gap-3 shrink-0">
-                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                      <ToolbarRow>
                         <TabsList className="grid grid-cols-2 w-full sm:w-[260px] rounded-xl bg-muted p-1">
                           <TabsTrigger value="personal" className="data-[state=active]:text-emerald-700">Cá nhân</TabsTrigger>
                           <TabsTrigger value="family" className="data-[state=active]:text-emerald-700">Gia đình</TabsTrigger>
@@ -225,7 +222,7 @@ export function DashboardClient({ categories, transactions, stats, familyMembers
                           <Filter className="h-4 w-4 mr-2" />
                           {showFilters ? "Ẩn bộ lọc" : "Hiện bộ lọc"}
                         </Button>
-                      </div>
+                      </ToolbarRow>
 
                       <TransactionFilters
                         categoryId={categoryId}
@@ -319,10 +316,10 @@ export function DashboardClient({ categories, transactions, stats, familyMembers
                   </div>
                 )}
               </SectionCard>
-            </section>
-
-            {showInsightsDesktop && (
-              <aside className="hidden min-h-0 flex-col gap-4 lg:col-span-4 lg:flex lg:overflow-y-auto">
+          }
+          side={
+            showInsightsDesktop ? (
+              <>
                 <InsightsPanel
                   title="Insights tháng này"
                   showManageLink
@@ -331,10 +328,11 @@ export function DashboardClient({ categories, transactions, stats, familyMembers
                   overBudgetCount={overBudgetCount}
                 />
                 <SpendingPieChart data={categoryStats} />
-              </aside>
-            )}
-          </div>
-        </div>
+              </>
+            ) : undefined
+          }
+        />
+      </Page>
 
         <Sheet open={mobileInsightsOpen} onOpenChange={setMobileInsightsOpen}>
           <SheetContent side="bottom" className="max-h-[90vh] overflow-y-auto">
@@ -371,7 +369,6 @@ export function DashboardClient({ categories, transactions, stats, familyMembers
           onEdit={handleEditFromView}
           readOnly={scope === 'family' || (viewingTransaction ? !isSameMonth(new Date(viewingTransaction.date), new Date()) : false)}
         />
-      </div>
     </>
   );
 }

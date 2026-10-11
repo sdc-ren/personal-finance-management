@@ -15,6 +15,7 @@ import { FilterX, Filter } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TAB_LIST, TAB_TRIGGER } from "@/lib/tab-styles";
 import { SectionCard } from "@/components/ui/finance";
+import { Page, PageHeader, ToolbarRow } from "@/components/ui/page";
 
 // Member interface based on common schema
 interface Member {
@@ -93,7 +94,7 @@ export function TransactionsClient({
   };
 
   return (
-    <div className="flex flex-col h-full relative">
+    <Page className="h-full">
       {/* Top Progress Bar */}
       {isPending && (
         <div className="fixed top-0 left-0 right-0 h-1 z-[100] bg-muted overflow-hidden">
@@ -101,67 +102,60 @@ export function TransactionsClient({
         </div>
       )}
 
-      {/* Page Title */}
-      <div className="flex-none mb-4">
-        <h1 className="text-xl font-semibold text-foreground sm:text-2xl">
-          Lịch sử giao dịch
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Xem lại mọi khoản thu chi của bạn theo từng ngày.
-        </p>
-      </div>
+      <PageHeader
+        title="Lịch sử giao dịch"
+        description="Xem lại mọi khoản thu chi của bạn theo từng ngày."
+      />
 
-      {/* Scope Tabs & Filters - Fixed at top */}
-      <div className="flex-none space-y-4 mb-4">
-        {familyMembers.length > 0 && (
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-            <Tabs value={scope} onValueChange={handleTabChange} className="w-full sm:w-auto">
-              <TabsList className={cn(TAB_LIST, "grid w-full grid-cols-2 sm:w-[400px]")}>
-                <TabsTrigger value="personal" className={TAB_TRIGGER}>Giao dịch cá nhân</TabsTrigger>
-                <TabsTrigger value="family" className={TAB_TRIGGER}>Giao dịch gia đình</TabsTrigger>
-              </TabsList>
-            </Tabs>
+      {/* Scope Tabs & Filters */}
+      {familyMembers.length > 0 && (
+        <ToolbarRow>
+          <Tabs value={scope} onValueChange={handleTabChange} className="w-full sm:w-auto">
+            <TabsList className={cn(TAB_LIST, "grid w-full grid-cols-2 sm:w-[400px]")}>
+              <TabsTrigger value="personal" className={TAB_TRIGGER}>Giao dịch cá nhân</TabsTrigger>
+              <TabsTrigger value="family" className={TAB_TRIGGER}>Giao dịch gia đình</TabsTrigger>
+            </TabsList>
+          </Tabs>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowFilters(!showFilters)}
-              className="h-11 w-full sm:h-9 sm:w-auto"
-            >
-              <Filter className="h-4 w-4 mr-2" />
-              {showFilters ? "Ẩn bộ lọc" : "Hiện bộ lọc"}
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowFilters(!showFilters)}
+            className="h-11 w-full sm:h-9 sm:w-auto"
+          >
+            <Filter className="h-4 w-4 mr-2" />
+            {showFilters ? "Ẩn bộ lọc" : "Hiện bộ lọc"}
+          </Button>
+        </ToolbarRow>
+      )}
+
+      <SectionCard className="p-3 sm:p-4">
+        <TransactionFilters
+          categoryId={categoryId}
+          memberId={memberId}
+          dateRange={dateRange || {}}
+          categories={categories}
+          familyMembers={familyMembers}
+          scope={scope as "personal" | "family"}
+          showFilters={showFilters}
+          hideTrigger={familyMembers.length > 0}
+          onCategoryChange={(v) => updateFilters({ categoryId: v })}
+          onMemberChange={(v) => updateFilters({ memberId: v })}
+          onDateRangeChange={updateDateRange}
+          onToggleFilters={() => setShowFilters(!showFilters)}
+        />
+
+        {/* Keep Clear Filters button separate */}
+        {(categoryId !== "all" || memberId !== "all" || dateRange) && (
+          <Button variant="ghost" size="sm" onClick={clearFilters} className="w-full sm:w-auto mt-3">
+            <FilterX className="h-4 w-4 mr-2" />
+            Xóa bộ lọc
+          </Button>
         )}
-
-        <SectionCard className="p-3 sm:p-4">
-          <TransactionFilters
-            categoryId={categoryId}
-            memberId={memberId}
-            dateRange={dateRange || {}}
-            categories={categories}
-            familyMembers={familyMembers}
-            scope={scope as "personal" | "family"}
-            showFilters={showFilters}
-            hideTrigger={familyMembers.length > 0}
-            onCategoryChange={(v) => updateFilters({ categoryId: v })}
-            onMemberChange={(v) => updateFilters({ memberId: v })}
-            onDateRangeChange={updateDateRange}
-            onToggleFilters={() => setShowFilters(!showFilters)}
-          />
-
-          {/* Keep Clear Filters button separate */}
-          {(categoryId !== "all" || memberId !== "all" || dateRange) && (
-            <Button variant="ghost" size="sm" onClick={clearFilters} className="w-full sm:w-auto mt-3">
-              <FilterX className="h-4 w-4 mr-2" />
-              Xóa bộ lọc
-            </Button>
-          )}
-        </SectionCard>
-      </div>
+      </SectionCard>
 
       {/* Transaction List - Scrollable area */}
-      <div className={cn("flex-1 overflow-y-auto", isPending && "opacity-50 transition-opacity")}>
+      <div className={cn("flex-1 min-h-0 overflow-y-auto", isPending && "opacity-50 transition-opacity")}>
         <TransactionList
           transactions={initialTransactions}
           onEdit={handleEdit}
@@ -187,6 +181,6 @@ export function TransactionsClient({
         onEdit={handleEditFromView}
         readOnly={scope === 'family' || (viewingTransaction ? !isSameMonth(new Date(viewingTransaction.date), new Date()) : false)}
       />
-    </div>
+    </Page>
   );
 }

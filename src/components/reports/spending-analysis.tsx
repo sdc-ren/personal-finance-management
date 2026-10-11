@@ -1,6 +1,7 @@
 "use client";
 
 import { SectionCard, StatCard } from "@/components/ui/finance";
+import { KpiRow } from "@/components/ui/page";
 import { PieChart, Pie, Cell, ResponsiveContainer, Sector } from "recharts";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -73,9 +74,9 @@ export function SpendingAnalysis({ summary, categories }: SpendingAnalysisProps)
     };
 
     return (
-        <div className="space-y-4">
+        <>
             {/* Summary Cards */}
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+            <KpiRow twoColOnMobile>
                 <StatCard label="Chi tiêu" tone="var(--pf-expense-ink)" value={formatCurrency(summary.expense)} />
                 <StatCard label="Thu nhập" tone="var(--pf-ok-ink)" value={formatCurrency(summary.income)} />
                 <StatCard
@@ -84,7 +85,7 @@ export function SpendingAnalysis({ summary, categories }: SpendingAnalysisProps)
                     value={formatCurrency(balance)}
                     className="col-span-2 sm:col-span-1"
                 />
-            </div>
+            </KpiRow>
 
             {/* Chart & Allocation */}
             <SectionCard title="Phân bổ chi tiêu">
@@ -196,6 +197,6 @@ export function SpendingAnalysis({ summary, categories }: SpendingAnalysisProps)
                     </div>
                 </div>
             </SectionCard>
-        </div>
+        </>
     );
 }

@@ -13,6 +13,7 @@ import { QuickPresetManager } from "@/components/settings/quick-preset-manager";
 import { WorkspaceLayout } from "@/components/layout/workspace-layout";
 import { TAB_LIST, TAB_TRIGGER } from "@/lib/tab-styles";
 import { cn } from "@/lib/utils";
+import { Page, PageHeader } from "@/components/ui/page";
 
 const TAB_LIST_CLASS = cn(TAB_LIST, "w-full overflow-x-auto sm:w-auto");
 
@@ -47,7 +48,12 @@ export default async function SettingsPage({
 
   return (
     <WorkspaceLayout withPanel={false}>
-      <Tabs defaultValue={defaultTab} className="space-y-4">
+      <Page>
+        <PageHeader
+          title="Cài đặt"
+          description="Quản lý ngân sách, nút ghi nhanh, danh mục và tài khoản."
+        />
+        <Tabs defaultValue={defaultTab} className="flex flex-col gap-4">
         <TabsList className={TAB_LIST_CLASS}>
           <TabsTrigger value="general" className={TAB_TRIGGER}>
             Thông tin chung
@@ -107,7 +113,8 @@ export default async function SettingsPage({
             </SectionCard>
           </TabsContent>
         )}
-      </Tabs>
+        </Tabs>
+      </Page>
     </WorkspaceLayout>
   );
 }

@@ -5,6 +5,7 @@ import { useUrlFilters } from "@/hooks/useUrlFilters";
 import { MonthPicker } from "@/components/ui/month-picker";
 import { TAB_LIST, TAB_TRIGGER } from "@/lib/tab-styles";
 import { cn } from "@/lib/utils";
+import { ToolbarRow } from "@/components/ui/page";
 
 interface ReportFiltersProps {
   initialScope: "personal" | "family";
@@ -34,7 +35,7 @@ export function ReportFilters({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+    <ToolbarRow>
       {hasFamily ? (
         <Tabs
           value={scope}
@@ -64,6 +65,6 @@ export function ReportFilters({
           align="end"
         />
       </div>
-    </div>
+    </ToolbarRow>
   );
 }

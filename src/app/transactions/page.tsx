@@ -46,17 +46,15 @@ export default async function TransactionsPage({
 
   return (
     <WorkspaceLayout
+      withPanel={false}
       fullHeight
-      contentInnerClassName="h-full p-4 sm:p-5"
     >
-      <div className="h-full overflow-hidden">
-        <TransactionsClient
-          initialTransactions={transactions}
-          categories={categories}
-          familyMembers={familyMembers}
-          initialScope={scope}
-        />
-      </div>
+      <TransactionsClient
+        initialTransactions={transactions}
+        categories={categories}
+        familyMembers={familyMembers}
+        initialScope={scope}
+      />
     </WorkspaceLayout>
   );
 }

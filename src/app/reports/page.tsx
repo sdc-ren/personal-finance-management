@@ -16,6 +16,7 @@ import { YearlyComparisonChart } from "@/components/charts/yearly-comparison";
 import { SpendingAnalysis } from "@/components/reports/spending-analysis";
 import { getAppDateParts, getAppMonthRange, parseDateParam } from "@/lib/app-time";
 import { WorkspaceLayout } from "@/components/layout/workspace-layout";
+import { Page, PageHeader, ContentGrid } from "@/components/ui/page";
 
 export default async function ReportsPage({
   searchParams,
@@ -61,27 +62,37 @@ export default async function ReportsPage({
     <WorkspaceLayout
       withPanel={false}
     >
-      <div className="space-y-5">
+      <Page>
+        <PageHeader
+          title="Báo cáo"
+          description="Phân tích thu chi theo thời gian và danh mục."
+        />
+
         <ReportFilters
           initialScope={scope}
           hasFamily={hasFamily}
           initialFrom={startDate}
         />
 
-        <div className="grid grid-cols-1 gap-5">
-          <SpendingAnalysis
-            summary={monthlySummary}
-            categories={categoryStats}
-          />
+        <ContentGrid
+          main={
+            <SpendingAnalysis
+              summary={monthlySummary}
+              categories={categoryStats}
+            />
+          }
+        />
 
-          <DailyCashflowChart data={dailyStats || []} />
+        <ContentGrid
+          main={<DailyCashflowChart data={dailyStats || []} />}
+        />
 
-          <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
-            <RecentTrendChart data={sixMonthTrend || []} />
-            <YearlyComparisonChart data={yearlyComparison || []} currentYear={currentYear} />
-          </div>
-        </div>
-      </div>
+        <ContentGrid
+          layout="6-6"
+          main={<RecentTrendChart data={sixMonthTrend || []} />}
+          side={<YearlyComparisonChart data={yearlyComparison || []} currentYear={currentYear} />}
+        />
+      </Page>
     </WorkspaceLayout>
   );
 }
