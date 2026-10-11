@@ -128,7 +128,7 @@ export function AddTransaction({ categories, initialData, open: controlledOpen, 
           </DialogTrigger>
         )}
         <DialogContent
-          className="max-h-[85vh] overflow-y-auto sm:max-w-[425px]"
+          className="max-h-[85vh] overflow-y-auto rounded-2xl sm:max-w-[425px]"
           onOpenAutoFocus={focusAmount}
           onPointerDownOutside={(e) => e.preventDefault()}
           onInteractOutside={(e) => e.preventDefault()}
@@ -157,7 +157,7 @@ export function AddTransaction({ categories, initialData, open: controlledOpen, 
       )}
       <SheetContent
         side="bottom"
-        className="max-h-[95vh] rounded-none px-4 overflow-y-auto pb-[calc(1rem+env(safe-area-inset-bottom))]"
+        className="max-h-[95vh] rounded-t-2xl px-4 overflow-y-auto pb-[calc(1rem+env(safe-area-inset-bottom))]"
         onOpenAutoFocus={focusAmount}
         onPointerDownOutside={(e) => e.preventDefault()}
         onInteractOutside={(e) => e.preventDefault()}

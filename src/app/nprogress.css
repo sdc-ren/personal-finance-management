@@ -4,7 +4,7 @@
 }
 
 #nprogress .bar {
-  background: hsl(var(--primary));
+  background: var(--primary);
   position: fixed;
   z-index: 9999;
   top: 0;

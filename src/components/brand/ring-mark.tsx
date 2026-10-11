@@ -1,6 +1,6 @@
 /**
- * Brandmark của thế giới: vòng detector đứt nét, vòng vàng bên trong,
- * tâm va chạm ở giữa. Dùng chung cho landing, trang auth và topbar app.
+ * Brandmark của phong cách "Sạch & tài chính": vòng tròn emerald gọn,
+ * tâm đặc — dùng chung cho landing, trang auth và topbar app.
  */
 export function RingMark({ className }: { className?: string }) {
   return (
@@ -10,12 +10,10 @@ export function RingMark({ className }: { className?: string }) {
         cy="16"
         r="13"
         fill="none"
-        stroke="var(--pf-geometry)"
-        strokeWidth="1.5"
-        strokeDasharray="5 4"
+        stroke="#059669"
+        strokeWidth="2.5"
       />
-      <circle cx="16" cy="16" r="7" fill="none" stroke="var(--pf-expense)" strokeWidth="1.5" />
-      <circle cx="16" cy="16" r="2" fill="var(--pf-expense)" />
+      <circle cx="16" cy="16" r="5" fill="#059669" />
     </svg>
   );
 }

@@ -9,8 +9,8 @@ import { getCategories } from "@/actions/transaction";
 import { AddTransaction } from "@/components/transaction/add-transaction";
 
 /**
- * Nút ghi giao dịch nổi ở giữa thanh điều hướng đáy. Đây là khối vàng đặc
- * duy nhất trên viewport mobile (Luật một nguồn sáng, bản app).
+ * Nút ghi giao dịch nổi ở giữa thanh điều hướng đáy. Đây là nút tròn emerald
+ * đặc duy nhất trên viewport mobile (Luật một nguồn sáng, bản app).
  *
  * Danh mục nạp lười: bấm lần đầu mới gọi getCategories(). Nếu nạp sẵn ở
  * WorkspaceLayout thì ba màn không cần dữ liệu này (báo cáo, gia đình, cài đặt)
@@ -49,7 +49,7 @@ export function QuickAddFab() {
         onClick={handleOpen}
         disabled={loading}
         aria-label="Ghi giao dịch"
-        className="flex h-14 w-14 -translate-y-3 items-center justify-center rounded-sm bg-(--pf-expense) text-(--pf-on-signal) transition-transform active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--pf-expense)"
+        className="flex h-14 w-14 -translate-y-3 items-center justify-center rounded-full bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 transition-all hover:bg-emerald-700 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
       >
         {loading ? (
           <Loader2 className="h-6 w-6 animate-spin" />

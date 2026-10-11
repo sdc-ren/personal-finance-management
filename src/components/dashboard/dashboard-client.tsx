@@ -12,7 +12,7 @@ import { CountUpAnimation } from "@/components/ui/count-up-animation";
 import { TransactionDetailsModal } from "@/components/transaction/transaction-details-modal";
 import { useUrlFilters } from "@/hooks/useUrlFilters";
 import { InsightsPanel } from "./insights-panel";
-import { SteelGrid, Readout } from "@/components/ui/panel";
+import { StatCard, SectionCard } from "@/components/ui/finance";
 import { formatCurrency } from "@/lib/format-currency";
 import { SpendingPieChart } from "./spending-pie-chart";
 
@@ -131,211 +131,209 @@ export function DashboardClient({ categories, transactions, stats, familyMembers
   return (
     <>
       <div className="h-full w-full">
-        <div className="grid h-full min-h-0 grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-px lg:border lg:border-border lg:bg-border">
-          <aside className="shrink-0 space-y-4 lg:col-span-3 lg:h-full lg:overflow-y-auto lg:bg-background lg:p-4">
-            {/* Hàng đo: lưới thép, số mono theo mã màu dữ liệu */}
-            <SteelGrid className="grid-cols-2 lg:grid-cols-1">
-              <Readout
-                label="Chi tiêu tháng này"
-                tone="var(--pf-expense-ink)"
-                className="col-span-2 lg:col-span-1"
-              >
-                <CountUpAnimation end={stats.expense} formatNumber={formatCurrency} />
-              </Readout>
-              <Readout
-                label="So với tháng trước"
-                tone={
-                  isIncrease
-                    ? "var(--pf-over-ink)"
-                    : isDecrease
-                      ? "var(--pf-ok-ink)"
-                      : undefined
-                }
-              >
-                {expensePercent > 0 ? "+" : ""}{expensePercent}%
-              </Readout>
-              <Readout
-                label="Ngân sách còn lại"
-                tone={
-                  remainingBudget < 0 ? "var(--pf-over-ink)" : "var(--pf-budget-ink)"
-                }
-              >
-                {formatCurrency(remainingBudget)}
-              </Readout>
-            </SteelGrid>
+        <div className="flex h-full min-h-0 flex-col gap-4 overflow-y-auto lg:gap-5 lg:overflow-hidden">
+          {/* Hàng KPI: 3 thẻ chỉ số trên cùng */}
+          <div className="grid shrink-0 grid-cols-1 gap-4 sm:grid-cols-3">
+            <StatCard
+              label="Thu nhập tháng"
+              tone="var(--pf-ok-ink)"
+              value={<CountUpAnimation end={stats.income} formatNumber={formatCurrency} />}
+            />
+            <StatCard
+              label="Chi tiêu tháng này"
+              tone="var(--pf-expense-ink)"
+              value={<CountUpAnimation end={stats.expense} formatNumber={formatCurrency} />}
+              sub={
+                <span className={isIncrease ? "text-(--pf-over-ink)" : isDecrease ? "text-(--pf-ok-ink)" : undefined}>
+                  {expensePercent > 0 ? "+" : ""}{expensePercent}% so với tháng trước
+                </span>
+              }
+            />
+            <StatCard
+              label="Còn lại"
+              value={formatCurrency(stats.income - stats.expense)}
+            />
+          </div>
 
-            <div className="grid grid-cols-1 gap-3">
-              <AddTransaction
-                categories={categories}
-                onTransactionAdded={handleTransactionAdded}
-              />
-            </div>
-          </aside>
+          {/* Ghi nhanh: nút hành động chính, nổi bật phía trên */}
+          <div className="shrink-0">
+            <AddTransaction
+              categories={categories}
+              onTransactionAdded={handleTransactionAdded}
+            />
+          </div>
 
-          <section
-            className={cn(
-              "flex min-h-0 flex-col gap-4 overflow-hidden lg:bg-background lg:p-4",
-              showInsightsDesktop ? "lg:col-span-6" : "lg:col-span-9"
-            )}
-          >
-            <div className="flex items-center justify-between gap-2 border-b border-border/70 pb-3">
-              <h2 className="pf-display text-lg font-bold text-foreground">Giao dịch tháng hiện tại</h2>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="lg:hidden"
-                  onClick={() => setMobileInsightsOpen(true)}
-                >
-                  <ChartPie className="h-4 w-4 mr-2" />
-                  Insights
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="hidden lg:inline-flex"
-                  onClick={() => setShowInsightsDesktop((prev) => !prev)}
-                >
-                  {showInsightsDesktop ? (
-                    <>
-                      <PanelRightClose className="h-4 w-4 mr-2" />
-                      Ẩn insights
-                    </>
-                  ) : (
-                    <>
-                      <PanelRightOpen className="h-4 w-4 mr-2" />
-                      Hiện insights
-                    </>
-                  )}
-                </Button>
-              </div>
-            </div>
-
-            {familyMembers.length > 0 ? (
-              <Tabs defaultValue={scope} onValueChange={handleTabChange} className="flex-1 flex flex-col min-h-0 gap-4">
-                <div className="flex flex-col gap-3 shrink-0">
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-                    <TabsList className="grid grid-cols-2 w-full sm:w-[260px]">
-                      <TabsTrigger value="personal">Cá nhân</TabsTrigger>
-                      <TabsTrigger value="family">Gia đình</TabsTrigger>
-                    </TabsList>
-
+          {/* Lưới nội dung */}
+          <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-5">
+            <section
+              className={cn(
+                "flex min-h-0 flex-col",
+                showInsightsDesktop ? "lg:col-span-8" : "lg:col-span-12"
+              )}
+            >
+              <SectionCard
+                title="Giao dịch tháng hiện tại"
+                className="flex min-h-0 flex-1 flex-col"
+                contentClassName="flex min-h-0 flex-1 flex-col"
+                action={
+                  <div className="flex items-center gap-2">
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setShowFilters(!showFilters)}
-                      className="w-full sm:w-auto h-9"
+                      className="lg:hidden"
+                      onClick={() => setMobileInsightsOpen(true)}
                     >
-                      <Filter className="h-4 w-4 mr-2" />
-                      {showFilters ? "Ẩn bộ lọc" : "Hiện bộ lọc"}
+                      <ChartPie className="h-4 w-4 mr-2" />
+                      Insights
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="hidden lg:inline-flex"
+                      onClick={() => setShowInsightsDesktop((prev) => !prev)}
+                    >
+                      {showInsightsDesktop ? (
+                        <>
+                          <PanelRightClose className="h-4 w-4 mr-2" />
+                          Ẩn insights
+                        </>
+                      ) : (
+                        <>
+                          <PanelRightOpen className="h-4 w-4 mr-2" />
+                          Hiện insights
+                        </>
+                      )}
                     </Button>
                   </div>
+                }
+              >
+                {familyMembers.length > 0 ? (
+                  <Tabs defaultValue={scope} onValueChange={handleTabChange} className="flex-1 flex flex-col min-h-0 gap-4">
+                    <div className="flex flex-col gap-3 shrink-0">
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                        <TabsList className="grid grid-cols-2 w-full sm:w-[260px] rounded-xl bg-muted p-1">
+                          <TabsTrigger value="personal" className="data-[state=active]:text-emerald-700">Cá nhân</TabsTrigger>
+                          <TabsTrigger value="family" className="data-[state=active]:text-emerald-700">Gia đình</TabsTrigger>
+                        </TabsList>
 
-                  <TransactionFilters
-                    categoryId={categoryId}
-                    memberId={memberId}
-                    dateRange={dateRange || {}}
-                    categories={categories}
-                    familyMembers={familyMembers}
-                    scope={scope as "personal" | "family"}
-                    showFilters={showFilters}
-                    hideTrigger
-                    hideDateFilter
-                    onCategoryChange={(val) => updateFilters({ categoryId: val })}
-                    onMemberChange={(val) => updateFilters({ memberId: val })}
-                    onDateRangeChange={handleDateSelect}
-                    onToggleFilters={() => setShowFilters(!showFilters)}
-                  />
-                </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowFilters(!showFilters)}
+                          className="w-full sm:w-auto h-9"
+                        >
+                          <Filter className="h-4 w-4 mr-2" />
+                          {showFilters ? "Ẩn bộ lọc" : "Hiện bộ lọc"}
+                        </Button>
+                      </div>
 
-                <TabsContent value="personal" className="flex-1 flex flex-col min-h-0 gap-3 mt-0">
-                  <div className="flex items-center justify-between shrink-0">
-                    <h3 className="text-base font-medium">Giao dịch cá nhân</h3>
-                    <Button variant="link" asChild className="px-0">
-                      <Link href="/transactions">Xem tất cả</Link>
-                    </Button>
+                      <TransactionFilters
+                        categoryId={categoryId}
+                        memberId={memberId}
+                        dateRange={dateRange || {}}
+                        categories={categories}
+                        familyMembers={familyMembers}
+                        scope={scope as "personal" | "family"}
+                        showFilters={showFilters}
+                        hideTrigger
+                        hideDateFilter
+                        onCategoryChange={(val) => updateFilters({ categoryId: val })}
+                        onMemberChange={(val) => updateFilters({ memberId: val })}
+                        onDateRangeChange={handleDateSelect}
+                        onToggleFilters={() => setShowFilters(!showFilters)}
+                      />
+                    </div>
+
+                    <TabsContent value="personal" className="flex-1 flex flex-col min-h-0 gap-3 mt-0">
+                      <div className="flex items-center justify-between shrink-0">
+                        <h3 className="text-base font-medium">Giao dịch cá nhân</h3>
+                        <Button variant="link" asChild className="px-0">
+                          <Link href="/transactions">Xem tất cả</Link>
+                        </Button>
+                      </div>
+                      <div className="flex-1 min-h-0">
+                        <TransactionList
+                          transactions={transactions}
+                          onEdit={handleEdit}
+                          onView={handleView}
+                          readOnly={false}
+                          isLoading={isTransactionListLoading}
+                          isFullPage
+                        />
+                      </div>
+                    </TabsContent>
+
+                    <TabsContent value="family" className="flex-1 flex flex-col min-h-0 gap-3 mt-0">
+                      <div className="flex items-center justify-between shrink-0">
+                        <h3 className="text-base font-medium">Giao dịch gia đình</h3>
+                      </div>
+                      <div className="flex-1 min-h-0">
+                        <TransactionList
+                          transactions={transactions}
+                          onEdit={handleEdit}
+                          onView={handleView}
+                          readOnly
+                          isLoading={isTransactionListLoading}
+                          isFullPage
+                        />
+                      </div>
+                    </TabsContent>
+                  </Tabs>
+                ) : (
+                  <div className="flex-1 flex flex-col min-h-0 gap-4">
+                    <div className="flex flex-col gap-3 shrink-0">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowFilters(!showFilters)}
+                        className="w-full sm:w-auto h-9"
+                      >
+                        <Filter className="h-4 w-4 mr-2" />
+                        {showFilters ? "Ẩn bộ lọc" : "Hiện bộ lọc"}
+                      </Button>
+
+                      <TransactionFilters
+                        categoryId={categoryId}
+                        dateRange={dateRange || {}}
+                        categories={categories}
+                        scope="personal"
+                        showFilters={showFilters}
+                        hideTrigger
+                        hideDateFilter
+                        onCategoryChange={(val) => updateFilters({ categoryId: val })}
+                        onDateRangeChange={handleDateSelect}
+                        onToggleFilters={() => setShowFilters(!showFilters)}
+                      />
+                    </div>
+
+                    <div className="flex-1 min-h-0">
+                      <TransactionList
+                        transactions={transactions}
+                        onEdit={handleEdit}
+                        onView={handleView}
+                        readOnly={false}
+                        isLoading={isTransactionListLoading}
+                        isFullPage
+                      />
+                    </div>
                   </div>
-                  <div className="flex-1 min-h-0">
-                    <TransactionList
-                      transactions={transactions}
-                      onEdit={handleEdit}
-                      onView={handleView}
-                      readOnly={false}
-                      isLoading={isTransactionListLoading}
-                      isFullPage
-                    />
-                  </div>
-                </TabsContent>
+                )}
+              </SectionCard>
+            </section>
 
-                <TabsContent value="family" className="flex-1 flex flex-col min-h-0 gap-3 mt-0">
-                  <div className="flex items-center justify-between shrink-0">
-                    <h3 className="text-base font-medium">Giao dịch gia đình</h3>
-                  </div>
-                  <div className="flex-1 min-h-0">
-                    <TransactionList
-                      transactions={transactions}
-                      onEdit={handleEdit}
-                      onView={handleView}
-                      readOnly
-                      isLoading={isTransactionListLoading}
-                      isFullPage
-                    />
-                  </div>
-                </TabsContent>
-              </Tabs>
-            ) : (
-              <div className="flex-1 flex flex-col min-h-0 gap-4">
-                <div className="flex flex-col gap-3 shrink-0">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowFilters(!showFilters)}
-                    className="w-full sm:w-auto h-9"
-                  >
-                    <Filter className="h-4 w-4 mr-2" />
-                    {showFilters ? "Ẩn bộ lọc" : "Hiện bộ lọc"}
-                  </Button>
-
-                  <TransactionFilters
-                    categoryId={categoryId}
-                    dateRange={dateRange || {}}
-                    categories={categories}
-                    scope="personal"
-                    showFilters={showFilters}
-                    hideTrigger
-                    hideDateFilter
-                    onCategoryChange={(val) => updateFilters({ categoryId: val })}
-                    onDateRangeChange={handleDateSelect}
-                    onToggleFilters={() => setShowFilters(!showFilters)}
-                  />
-                </div>
-
-                <div className="flex-1 min-h-0">
-                  <TransactionList
-                    transactions={transactions}
-                    onEdit={handleEdit}
-                    onView={handleView}
-                    readOnly={false}
-                    isLoading={isTransactionListLoading}
-                    isFullPage
-                  />
-                </div>
-              </div>
+            {showInsightsDesktop && (
+              <aside className="hidden min-h-0 flex-col gap-4 lg:col-span-4 lg:flex lg:overflow-y-auto">
+                <InsightsPanel
+                  title="Insights tháng này"
+                  showManageLink
+                  remainingBudget={remainingBudget}
+                  budgetUsage={budgetUsage}
+                  overBudgetCount={overBudgetCount}
+                />
+                <SpendingPieChart data={categoryStats} />
+              </aside>
             )}
-          </section>
-
-          {showInsightsDesktop && (
-            <aside className="hidden flex-col gap-4 lg:col-span-3 lg:flex lg:h-full lg:overflow-y-auto lg:bg-background lg:p-4">
-              <InsightsPanel
-                title="Insights tháng này"
-                showManageLink
-                remainingBudget={remainingBudget}
-                budgetUsage={budgetUsage}
-                overBudgetCount={overBudgetCount}
-              />
-              <SpendingPieChart data={categoryStats} />
-            </aside>
-          )}
+          </div>
         </div>
 
         <Sheet open={mobileInsightsOpen} onOpenChange={setMobileInsightsOpen}>

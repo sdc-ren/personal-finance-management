@@ -120,9 +120,9 @@ export function CategoryDialog({ open, onOpenChange, category }: CategoryDialogP
                             name="name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="pf-mono text-[11px] tracking-[0.14em] uppercase">Tên danh mục</FormLabel>
+                                    <FormLabel className="text-sm font-medium">Tên danh mục</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Ví dụ: Ăn uống, Lương..." {...field} />
+                                        <Input placeholder="Ví dụ: Ăn uống, Lương..." className="rounded-lg" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -134,10 +134,10 @@ export function CategoryDialog({ open, onOpenChange, category }: CategoryDialogP
                             name="type"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="pf-mono text-[11px] tracking-[0.14em] uppercase">Loại giao dịch</FormLabel>
+                                    <FormLabel className="text-sm font-medium">Loại giao dịch</FormLabel>
                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                         <FormControl>
-                                            <SelectTrigger>
+                                            <SelectTrigger className="rounded-lg">
                                                 <SelectValue placeholder="Chọn loại giao dịch" />
                                             </SelectTrigger>
                                         </FormControl>
@@ -152,10 +152,10 @@ export function CategoryDialog({ open, onOpenChange, category }: CategoryDialogP
                         />
 
                         <DialogFooter className="pt-4">
-                            <Button type="button" variant="outline" className="rounded-sm" onClick={() => onOpenChange(false)} disabled={loading}>
+                            <Button type="button" variant="outline" className="rounded-lg" onClick={() => onOpenChange(false)} disabled={loading}>
                                 Hủy
                             </Button>
-                            <Button type="submit" className="rounded-sm" disabled={loading}>
+                            <Button type="submit" className="rounded-lg" disabled={loading}>
                                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                 {category ? "Lưu thay đổi" : "Tạo danh mục"}
                             </Button>

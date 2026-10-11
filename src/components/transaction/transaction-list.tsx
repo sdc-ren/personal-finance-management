@@ -106,13 +106,15 @@ export function TransactionList({
 
   if (transactions.length === 0 && !isLoading) {
     return (
-      <div className="flex h-full min-h-[300px] flex-col items-center justify-center gap-4 border border-border bg-card p-6 text-center sm:p-8">
-        <RingMark className="h-10 w-10 opacity-60" />
+      <div className="flex h-full min-h-[300px] flex-col items-center justify-center gap-4 rounded-xl border border-border bg-card p-6 text-center shadow-sm sm:p-8">
+        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-slate-100">
+          <RingMark className="h-7 w-7 opacity-60" />
+        </span>
         <div className="space-y-1">
-          <h3 className="pf-display text-base font-bold text-foreground sm:text-lg">
+          <h3 className="text-base font-semibold text-foreground sm:text-lg">
             Chưa có giao dịch nào
           </h3>
-          <p className="mx-auto max-w-[260px] text-xs text-muted-foreground sm:text-sm">
+          <p className="mx-auto max-w-[280px] text-sm text-muted-foreground">
             Bắt đầu ghi lại chi tiêu và thu nhập của bạn để quản lý tài chính tốt hơn.
           </p>
         </div>
@@ -122,22 +124,25 @@ export function TransactionList({
 
   if (isLoading) {
     return (
-      <div className="border border-border bg-card">
+      <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
         <div
           style={{ height: GROUP_HEADER_H }}
-          className="flex items-center border-b border-border px-3 sm:px-4"
+          className="flex items-center px-3 sm:px-4"
         >
           <Skeleton className="h-3 w-24" />
         </div>
-        <div className="divide-y divide-border">
+        <div>
           {[...Array(6)].map((_, i) => (
             <div
               key={i}
               style={{ height: ROW_H }}
               className="flex items-center gap-3 px-3 sm:px-4"
             >
-              <Skeleton className="h-3 w-12 shrink-0" />
-              <Skeleton className="h-3 flex-1" />
+              <Skeleton className="h-9 w-9 shrink-0 rounded-full" />
+              <div className="flex-1 space-y-1.5">
+                <Skeleton className="h-3 w-2/5" />
+                <Skeleton className="h-2.5 w-1/4" />
+              </div>
               <Skeleton className="h-3 w-20 shrink-0" />
             </div>
           ))}

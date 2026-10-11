@@ -39,8 +39,8 @@ import { Category, Transaction } from "@prisma/client";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TAB_LIST, TAB_TRIGGER } from "@/lib/tab-styles";
 
-/** Nhãn field kiểu nhãn máy — cùng công thức với category-dialog. */
-const FIELD_LABEL = "pf-mono text-[11px] tracking-[0.14em] uppercase";
+/** Nhãn field: text-xs font-medium theo phong cách "Sạch & tài chính". */
+const FIELD_LABEL = "text-xs font-medium";
 
 /** Chip cộng nhanh vào ô số tiền. */
 const QUICK_AMOUNTS = [50_000, 100_000, 200_000, 500_000] as const;
@@ -51,7 +51,7 @@ const QUICK_AMOUNTS = [50_000, 100_000, 200_000, 500_000] as const;
  * twMerge phân xử đúng — class đứng sau thắng (đã kiểm bằng node).
  */
 const TAB_TRIGGER_OK_OVERRIDE =
-  "data-[state=active]:border-(--pf-ok) data-[state=active]:text-(--pf-ok-ink) dark:data-[state=active]:text-(--pf-ok-ink)";
+  "data-[state=active]:text-(--pf-ok-ink) dark:data-[state=active]:text-(--pf-ok-ink)";
 
 const formSchema = z.object({
   amount: z.coerce.number().positive("Số tiền phải lớn hơn 0"),
@@ -153,7 +153,7 @@ export function TransactionForm({ categories, initialData, onSuccess }: Transact
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
         <FormField
           control={form.control}
           name="type"
@@ -205,7 +205,7 @@ export function TransactionForm({ categories, initialData, onSuccess }: Transact
                     placeholder="0"
                     type="text"
                     inputMode="numeric"
-                    className="pf-mono h-12 rounded-sm pl-8 text-lg"
+                    className="pf-mono h-12 rounded-lg border-slate-200 pl-8 text-lg focus-visible:border-emerald-600 focus-visible:ring-emerald-600/30"
                     disabled={loading}
                   />
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">₫</span>
@@ -224,7 +224,7 @@ export function TransactionForm({ categories, initialData, onSuccess }: Transact
                         shouldDirty: true,
                       })
                     }
-                    className="pf-mono min-h-11 cursor-pointer rounded-sm border border-border text-[11px] tracking-wide text-(--pf-expense-ink) transition-colors hover:bg-accent disabled:opacity-50 sm:min-h-0 sm:h-9"
+                    className="pf-mono min-h-11 cursor-pointer rounded-lg border border-border text-[11px] tracking-wide text-(--pf-expense-ink) transition-colors hover:bg-accent disabled:opacity-50 sm:min-h-0 sm:h-9"
                   >
                     +{step / 1000}k
                   </button>
@@ -243,7 +243,7 @@ export function TransactionForm({ categories, initialData, onSuccess }: Transact
               <FormLabel className={FIELD_LABEL}>Danh mục</FormLabel>
               <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value} disabled={loading}>
                 <FormControl>
-                  <SelectTrigger className="h-11 w-full rounded-sm sm:h-9">
+                  <SelectTrigger className="h-11 w-full rounded-lg border-slate-200 sm:h-9">
                     <SelectValue placeholder="Chọn danh mục" />
                   </SelectTrigger>
                 </FormControl>
@@ -294,7 +294,7 @@ export function TransactionForm({ categories, initialData, onSuccess }: Transact
               <FormItem className="animate-in fade-in slide-in-from-top-2">
                 <FormLabel className={FIELD_LABEL}>Mã giao dịch (Tùy chọn)</FormLabel>
                 <FormControl>
-                  <Input {...field} value={field.value || ""} placeholder="Nhập mã giao dịch / ghi chú chuyển khoản" disabled={loading} />
+                  <Input {...field} value={field.value || ""} placeholder="Nhập mã giao dịch / ghi chú chuyển khoản" disabled={loading} className="rounded-lg border-slate-200 focus-visible:border-emerald-600 focus-visible:ring-emerald-600/30" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -313,7 +313,7 @@ export function TransactionForm({ categories, initialData, onSuccess }: Transact
                   {...field}
                   disabled={loading}
                   rows={3}
-                  className="resize-none rounded-sm"
+                  className="resize-none rounded-lg border-slate-200 focus-visible:border-emerald-600 focus-visible:ring-emerald-600/30"
                 />
               </FormControl>
               <FormMessage />
@@ -347,7 +347,7 @@ export function TransactionForm({ categories, initialData, onSuccess }: Transact
                       <Button
                         variant={"outline"}
                         className={cn(
-                          "w-full rounded-sm pl-3 text-left font-normal",
+                          "w-full rounded-lg pl-3 text-left font-normal",
                           !field.value && "text-muted-foreground"
                         )}
                         disabled={loading}
@@ -383,7 +383,7 @@ export function TransactionForm({ categories, initialData, onSuccess }: Transact
           />
         )}
 
-        <Button type="submit" disabled={loading} className="w-full rounded-sm">
+        <Button type="submit" disabled={loading} className="h-12 w-full rounded-xl bg-emerald-600 text-base font-semibold text-white hover:bg-emerald-700">
           {loading ? "Đang lưu..." : initialData ? "Cập nhật" : type === "INCOME" ? "Lưu khoản thu" : "Lưu khoản chi"}
         </Button>
       </form>

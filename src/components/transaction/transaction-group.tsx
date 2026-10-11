@@ -21,22 +21,29 @@ interface TransactionGroupProps {
 }
 
 /**
- * Một ngày là một panel của sổ: khung hairline, header ngày, các dòng chia bằng
- * đường kẻ. Không sticky — mỗi nhóm là một box `position:absolute` của
- * react-window nên sticky không có tác dụng ở đây.
+ * Một ngày là một card của sổ: khung rounded-xl, header ngày kiểu "Sạch & tài
+ * chính", các dòng không còn đường kẻ hairline.
+ *
+ * Không sticky — mỗi nhóm là một box `position:absolute` của react-window nên
+ * sticky không có tác dụng ở đây. Chiều cao vẫn giữ hợp đồng
+ * GROUP_HEADER_H + PANEL_BORDER_Y + n*ROW_H.
  */
 export function TransactionGroup({ date, transactions, onEdit, onView, readOnly = false }: TransactionGroupProps) {
   return (
-    <div className="border border-border bg-card">
+    <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
       <div
         style={{ height: GROUP_HEADER_H }}
-        className="pf-mono flex items-center justify-between border-b border-border px-3 text-[10px] tracking-[0.14em] text-muted-foreground uppercase sm:px-4"
+        className="flex items-center justify-between px-3 sm:px-4"
       >
-        <span>{formatDateHeader(date)}</span>
-        <span>{transactions.length} khoản</span>
+        <span className="text-sm font-semibold text-foreground">
+          {formatDateHeader(date)}
+        </span>
+        <span className="text-xs font-medium text-muted-foreground">
+          {transactions.length} khoản
+        </span>
       </div>
 
-      <div className="divide-y divide-border">
+      <div>
         {transactions.map((transaction) => (
           <TransactionItem
             key={transaction.id}

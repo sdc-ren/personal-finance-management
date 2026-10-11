@@ -146,22 +146,29 @@ export function QuickPresetManager({ categories, initialPresets }: Props) {
 
       {/* Danh sách hiện có */}
       {presets.length === 0 ? (
-        <p className="py-4 text-center text-sm text-muted-foreground">Chưa có nút nào.</p>
+        <div className="rounded-xl border border-dashed border-border px-4 py-8 text-center">
+          <p className="text-sm text-muted-foreground">Chưa có nút nào.</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Tạo nút đầu tiên ở form bên dưới.
+          </p>
+        </div>
       ) : (
-        <ul className="space-y-2">
+        <ul className="grid gap-2.5 sm:grid-cols-2">
           {presets.map((p) => {
             const Icon = ICONS[p.icon] || Zap;
             return (
               <li
                 key={p.id}
-                className="flex items-center gap-3 rounded-sm border border-border bg-card px-3 py-2.5"
+                className="flex items-center gap-3 rounded-xl border border-border bg-card p-3 shadow-sm"
               >
-                <span className="flex h-9 w-9 items-center justify-center rounded-sm bg-muted">
-                  <Icon className="h-4 w-4" strokeWidth={1.8} />
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700">
+                  <Icon className="h-4.5 w-4.5" strokeWidth={1.8} />
                 </span>
-                <span className="flex-1">
-                  <span className="block text-sm font-medium">{p.label}</span>
-                  <span className="block text-xs text-muted-foreground">
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-medium text-foreground">
+                    {p.label}
+                  </span>
+                  <span className="block truncate text-xs text-muted-foreground">
                     {p.category.name} · {p.type === "INCOME" ? "Tiền vào" : "Tiền ra"}
                   </span>
                 </span>
@@ -170,7 +177,7 @@ export function QuickPresetManager({ categories, initialPresets }: Props) {
                   onClick={() => handleDelete(p.id, p.label)}
                   disabled={deletingId === p.id}
                   aria-label={`Xoá nút ${p.label}`}
-                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-sm text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive disabled:opacity-50"
+                  className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-rose-50 hover:text-rose-600 disabled:opacity-50"
                 >
                   {deletingId === p.id ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -185,16 +192,14 @@ export function QuickPresetManager({ categories, initialPresets }: Props) {
       )}
 
       {/* Form thêm nút */}
-      <div className="space-y-3 rounded-sm border border-dashed border-border p-4">
-        <p className="pf-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
-          Thêm nút mới
-        </p>
+      <div className="space-y-4 rounded-xl border border-border bg-muted/30 p-4 sm:p-5">
+        <p className="text-sm font-semibold text-foreground">Thêm nút mới</p>
         <Tabs value={type} onValueChange={handleTypeChange}>
           <TabsList className={cn(TAB_LIST, "grid w-full grid-cols-2")}>
             <TabsTrigger value="EXPENSE" className={TAB_TRIGGER}>
               Tiền ra
             </TabsTrigger>
-            <TabsTrigger value="INCOME" className={cn(TAB_TRIGGER, "data-[state=active]:border-(--pf-ok) data-[state=active]:text-(--pf-ok-ink) dark:data-[state=active]:text-(--pf-ok-ink)")}>
+            <TabsTrigger value="INCOME" className={TAB_TRIGGER}>
               Tiền vào
             </TabsTrigger>
           </TabsList>
@@ -204,11 +209,11 @@ export function QuickPresetManager({ categories, initialPresets }: Props) {
           onChange={(e) => setLabel(e.target.value)}
           placeholder="Tên nút, ví dụ: Ăn sáng"
           maxLength={30}
-          className="rounded-sm"
+          className="rounded-lg"
         />
         <div className="grid grid-cols-2 gap-2">
           <Select value={categoryId} onValueChange={setCategoryId}>
-            <SelectTrigger className="w-full rounded-sm">
+            <SelectTrigger className="w-full rounded-lg">
               <SelectValue placeholder="Danh mục" />
             </SelectTrigger>
             <SelectContent>
@@ -223,7 +228,7 @@ export function QuickPresetManager({ categories, initialPresets }: Props) {
             value={paymentMethod}
             onValueChange={(v) => setPaymentMethod(v as "CASH" | "TRANSFER")}
           >
-            <SelectTrigger className="w-full rounded-sm">
+            <SelectTrigger className="w-full rounded-lg">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -233,7 +238,7 @@ export function QuickPresetManager({ categories, initialPresets }: Props) {
           </Select>
         </div>
         <div>
-          <p className="mb-2 text-xs text-muted-foreground">Icon</p>
+          <p className="mb-2 text-xs font-medium text-muted-foreground">Icon</p>
           <div className="grid grid-cols-9 gap-1.5">
             {QUICK_PRESET_ICONS.map((key) => {
               const Icon = ICONS[key] || Zap;
@@ -244,9 +249,9 @@ export function QuickPresetManager({ categories, initialPresets }: Props) {
                   onClick={() => setIcon(key)}
                   aria-label={`Icon ${key}`}
                   className={cn(
-                    "flex h-9 cursor-pointer items-center justify-center rounded-sm border transition-colors",
+                    "flex h-9 cursor-pointer items-center justify-center rounded-lg border transition-colors",
                     icon === key
-                      ? "border-(--pf-expense) bg-(--pf-expense)/10 text-(--pf-expense-ink)"
+                      ? "border-emerald-600 bg-emerald-50 text-emerald-700"
                       : "border-border text-muted-foreground hover:bg-accent"
                   )}
                 >
@@ -260,7 +265,7 @@ export function QuickPresetManager({ categories, initialPresets }: Props) {
           type="button"
           onClick={handleAdd}
           disabled={adding}
-          className="w-full rounded-sm"
+          className="w-full rounded-lg"
         >
           {adding ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
           {adding ? "Đang thêm…" : "Thêm nút"}

@@ -1,6 +1,6 @@
 "use client";
 
-import { Panel } from "@/components/ui/panel";
+import { SectionCard } from "@/components/ui/finance";
 import { PieChart, Pie, Cell, ResponsiveContainer, Sector } from "recharts";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -72,7 +72,7 @@ export function SpendingPieChart({ data }: SpendingPieChartProps) {
   }
 
   return (
-    <Panel plaque="Phân bổ chi tiêu" className="p-4">
+    <SectionCard title="Phân bổ chi tiêu">
       <div className="flex flex-col gap-6">
         <div className="relative flex h-[220px] w-full justify-center [&_:focus]:outline-none">
           <ResponsiveContainer width="100%" height="100%">
@@ -106,7 +106,7 @@ export function SpendingPieChart({ data }: SpendingPieChartProps) {
           </ResponsiveContainer>
 
           <div className="pointer-events-none absolute inset-0 flex select-none flex-col items-center justify-center">
-            <span className="pf-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">Tổng chi</span>
+            <span className="text-xs font-medium text-muted-foreground">Tổng chi</span>
             <span className="pf-mono mt-1 text-sm font-semibold text-(--pf-expense-ink)">
               {formatCurrency(totalExpense)}
             </span>
@@ -150,12 +150,12 @@ export function SpendingPieChart({ data }: SpendingPieChartProps) {
             );
           })}
           {categoriesWithPercent.length > 5 && (
-            <div className="pf-mono pt-2 text-center text-[11px] tracking-[0.1em] text-muted-foreground uppercase">
+            <div className="pt-2 text-center text-[11px] text-muted-foreground">
               + {categoriesWithPercent.length - 5} danh mục khác
             </div>
           )}
         </div>
       </div>
-    </Panel>
+    </SectionCard>
   );
 }

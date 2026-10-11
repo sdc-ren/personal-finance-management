@@ -37,14 +37,14 @@ export function WorkspaceBottomNav() {
               aria-current={active ? "page" : undefined}
               className={cn(
                 "relative flex min-h-14 flex-col items-center justify-center gap-1 transition-colors",
-                active ? "text-(--pf-expense-ink)" : "text-muted-foreground"
+                active ? "text-emerald-700" : "text-muted-foreground"
               )}
             >
               {active && (
-                <span className="absolute inset-x-3 top-0 h-0.5 bg-(--pf-expense)" />
+                <span className="absolute inset-x-6 top-0 h-0.5 rounded-full bg-emerald-600" />
               )}
               <item.icon className="h-5 w-5" />
-              <span className="pf-mono text-[10px] tracking-[0.08em] uppercase">
+              <span className="text-[11px] font-medium">
                 {item.label}
               </span>
             </Link>

@@ -31,12 +31,12 @@ export function WorkspaceTopBar() {
       <div className="flex h-14 items-center justify-between gap-3 px-4 sm:px-6 lg:px-10 xl:px-14">
         <Link href="/dashboard" className="flex min-h-11 items-center gap-2.5">
           <RingMark className="h-7 w-7 shrink-0" />
-          <span className="pf-display hidden text-sm font-semibold tracking-[0.12em] whitespace-nowrap text-foreground min-[380px]:inline">
+          <span className="hidden text-sm font-semibold tracking-wide whitespace-nowrap text-foreground min-[380px]:inline">
             PERSONAL FINANCE
           </span>
         </Link>
 
-        <nav className="hidden items-center lg:flex">
+        <nav className="hidden items-center gap-1 lg:flex">
           {navItems.map((item) => {
             const active = isActivePath(pathname, item.href);
 
@@ -46,15 +46,15 @@ export function WorkspaceTopBar() {
                 href={item.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "pf-mono relative flex h-14 items-center px-4 text-[11px] tracking-[0.14em] uppercase transition-colors",
+                  "relative flex h-14 items-center px-4 text-sm font-medium transition-colors",
                   active
-                    ? "text-(--pf-expense-ink)"
+                    ? "text-emerald-700"
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 {item.label}
                 {active && (
-                  <span className="absolute inset-x-3 bottom-0 h-0.5 bg-(--pf-expense)" />
+                  <span className="absolute inset-x-4 bottom-0 h-0.5 rounded-full bg-emerald-600" />
                 )}
               </Link>
             );
@@ -63,7 +63,7 @@ export function WorkspaceTopBar() {
 
         <div className="flex items-center gap-1">
           {userName && (
-            <span className="pf-mono mr-1 hidden text-[11px] tracking-[0.1em] text-muted-foreground uppercase xl:inline">
+            <span className="mr-1 hidden text-xs text-muted-foreground xl:inline">
               {userName}
             </span>
           )}

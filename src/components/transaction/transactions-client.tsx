@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { FilterX, Filter } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TAB_LIST, TAB_TRIGGER } from "@/lib/tab-styles";
+import { SectionCard } from "@/components/ui/finance";
 
 // Member interface based on common schema
 interface Member {
@@ -100,6 +101,16 @@ export function TransactionsClient({
         </div>
       )}
 
+      {/* Page Title */}
+      <div className="flex-none mb-4">
+        <h1 className="text-xl font-semibold text-foreground sm:text-2xl">
+          Lịch sử giao dịch
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Xem lại mọi khoản thu chi của bạn theo từng ngày.
+        </p>
+      </div>
+
       {/* Scope Tabs & Filters - Fixed at top */}
       <div className="flex-none space-y-4 mb-4">
         {familyMembers.length > 0 && (
@@ -123,28 +134,30 @@ export function TransactionsClient({
           </div>
         )}
 
-        <TransactionFilters
-          categoryId={categoryId}
-          memberId={memberId}
-          dateRange={dateRange || {}}
-          categories={categories}
-          familyMembers={familyMembers}
-          scope={scope as "personal" | "family"}
-          showFilters={showFilters}
-          hideTrigger={familyMembers.length > 0}
-          onCategoryChange={(v) => updateFilters({ categoryId: v })}
-          onMemberChange={(v) => updateFilters({ memberId: v })}
-          onDateRangeChange={updateDateRange}
-          onToggleFilters={() => setShowFilters(!showFilters)}
-        />
+        <SectionCard className="p-3 sm:p-4">
+          <TransactionFilters
+            categoryId={categoryId}
+            memberId={memberId}
+            dateRange={dateRange || {}}
+            categories={categories}
+            familyMembers={familyMembers}
+            scope={scope as "personal" | "family"}
+            showFilters={showFilters}
+            hideTrigger={familyMembers.length > 0}
+            onCategoryChange={(v) => updateFilters({ categoryId: v })}
+            onMemberChange={(v) => updateFilters({ memberId: v })}
+            onDateRangeChange={updateDateRange}
+            onToggleFilters={() => setShowFilters(!showFilters)}
+          />
 
-        {/* Keep Clear Filters button separate */}
-        {(categoryId !== "all" || memberId !== "all" || dateRange) && (
-          <Button variant="ghost" size="sm" onClick={clearFilters} className="w-full sm:w-auto">
-            <FilterX className="h-4 w-4 mr-2" />
-            Xóa bộ lọc
-          </Button>
-        )}
+          {/* Keep Clear Filters button separate */}
+          {(categoryId !== "all" || memberId !== "all" || dateRange) && (
+            <Button variant="ghost" size="sm" onClick={clearFilters} className="w-full sm:w-auto mt-3">
+              <FilterX className="h-4 w-4 mr-2" />
+              Xóa bộ lọc
+            </Button>
+          )}
+        </SectionCard>
       </div>
 
       {/* Transaction List - Scrollable area */}

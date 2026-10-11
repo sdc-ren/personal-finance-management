@@ -227,7 +227,7 @@ export function QuickVoiceAdd({ categories, onTransactionAdded }: QuickVoiceAddP
             <TabsTrigger value="EXPENSE" className={TAB_TRIGGER}>
               Tiền ra
             </TabsTrigger>
-            <TabsTrigger value="INCOME" className={cn(TAB_TRIGGER, "data-[state=active]:border-(--pf-ok) data-[state=active]:text-(--pf-ok-ink) dark:data-[state=active]:text-(--pf-ok-ink)")}>
+            <TabsTrigger value="INCOME" className={cn(TAB_TRIGGER, "data-[state=active]:text-(--pf-ok-ink) dark:data-[state=active]:text-(--pf-ok-ink)")}>
               Tiền vào
             </TabsTrigger>
           </TabsList>
@@ -236,7 +236,7 @@ export function QuickVoiceAdd({ categories, onTransactionAdded }: QuickVoiceAddP
         {presets === null ? (
           <div className="grid grid-cols-3 gap-2">
             {Array.from({ length: 9 }).map((_, i) => (
-              <div key={i} className="h-20 animate-pulse rounded-sm bg-muted" />
+              <div key={i} className="h-20 animate-pulse rounded-xl bg-muted" />
             ))}
           </div>
         ) : filtered.length === 0 ? (
@@ -252,7 +252,7 @@ export function QuickVoiceAdd({ categories, onTransactionAdded }: QuickVoiceAddP
                   key={p.id}
                   type="button"
                   onClick={() => selectPreset(p)}
-                  className="flex min-h-20 cursor-pointer flex-col items-center justify-center gap-1.5 rounded-sm border border-border bg-card px-2 py-3 transition-colors active:scale-95 hover:bg-accent"
+                  className="flex min-h-20 cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-2 py-3 transition-colors active:scale-95 hover:bg-accent"
                 >
                   <Icon className="h-6 w-6 text-(--pf-expense-ink)" strokeWidth={1.8} />
                   <span className="text-center text-xs font-medium leading-tight">
@@ -281,9 +281,9 @@ export function QuickVoiceAdd({ categories, onTransactionAdded }: QuickVoiceAddP
       <button
         type="button"
         onClick={backToPresets}
-        className="flex w-full cursor-pointer items-center gap-3 rounded-sm border border-border bg-card px-3 py-2.5 text-left transition-colors hover:bg-accent"
+        className="flex w-full cursor-pointer items-center gap-3 rounded-xl border border-emerald-600 bg-emerald-50 px-3 py-2.5 text-left transition-colors hover:bg-emerald-100"
       >
-        <span className="flex h-10 w-10 items-center justify-center rounded-sm bg-muted">
+        <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-white shadow-sm">
           <Icon className="h-5 w-5" strokeWidth={1.8} />
         </span>
         <span className="flex-1">
@@ -298,7 +298,7 @@ export function QuickVoiceAdd({ categories, onTransactionAdded }: QuickVoiceAddP
       {manualMode || !voice.supported ? (
         <div className="space-y-3">
           {!voice.supported && (
-            <p className="rounded-sm border border-border bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
+            <p className="rounded-lg border border-border bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
               {VOICE_ERROR_MESSAGE.unsupported}
             </p>
           )}
@@ -308,7 +308,7 @@ export function QuickVoiceAdd({ categories, onTransactionAdded }: QuickVoiceAddP
               onChange={(e) => setManualAmount(e.target.value.replace(/\D/g, ""))}
               placeholder="0"
               inputMode="numeric"
-              className="pf-mono h-14 rounded-sm pl-8 text-xl"
+              className="pf-mono h-14 rounded-lg border-slate-200 pl-8 text-xl focus-visible:border-emerald-600 focus-visible:ring-emerald-600/30"
               autoFocus
             />
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">₫</span>
@@ -320,7 +320,7 @@ export function QuickVoiceAdd({ categories, onTransactionAdded }: QuickVoiceAddP
                 setManualMode(false);
                 voice.start();
               }}
-              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm border border-dashed border-border py-2.5 text-sm text-muted-foreground transition-colors hover:bg-accent"
+              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-border py-2.5 text-sm text-muted-foreground transition-colors hover:bg-accent"
             >
               <Mic className="h-4 w-4" /> Dùng giọng nói thay vì gõ
             </button>
@@ -335,14 +335,14 @@ export function QuickVoiceAdd({ categories, onTransactionAdded }: QuickVoiceAddP
               onClick={() => (voice.listening ? voice.stop() : voice.start())}
               aria-label={voice.listening ? "Dừng nghe" : "Bắt đầu nói"}
               className={cn(
-                "relative flex h-20 w-20 cursor-pointer items-center justify-center rounded-full transition-transform active:scale-95",
+                "relative flex h-24 w-24 cursor-pointer items-center justify-center rounded-full transition-all active:scale-95",
                 voice.listening
-                  ? "bg-(--pf-expense) text-(--pf-on-signal)"
-                  : "border-2 border-(--pf-expense) text-(--pf-expense-ink)"
+                  ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30"
+                  : "border-2 border-emerald-600 bg-white text-emerald-700 shadow-sm hover:bg-emerald-50"
               )}
             >
               {voice.listening && (
-                <span className="absolute inset-0 animate-ping rounded-full bg-(--pf-expense) opacity-25" />
+                <span className="absolute inset-0 animate-ping rounded-full bg-emerald-600 opacity-25" />
               )}
               {voice.listening ? (
                 <Square className="h-7 w-7" fill="currentColor" />
@@ -359,7 +359,7 @@ export function QuickVoiceAdd({ categories, onTransactionAdded }: QuickVoiceAddP
 
           {/* Lỗi */}
           {voice.error && (
-            <p className="rounded-sm border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
+            <p className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
               {VOICE_ERROR_MESSAGE[voice.error]}{" "}
               <button
                 type="button"
@@ -373,7 +373,7 @@ export function QuickVoiceAdd({ categories, onTransactionAdded }: QuickVoiceAddP
 
           {/* Transcript */}
           {(voice.finalText || voice.interim) && (
-            <div className="rounded-sm border border-border bg-muted/40 px-3 py-2.5">
+            <div className="rounded-lg border border-border bg-muted/40 px-3 py-2.5">
               <p className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground pf-mono">
                 Nghe được
               </p>
@@ -400,7 +400,7 @@ export function QuickVoiceAdd({ categories, onTransactionAdded }: QuickVoiceAddP
       )}
 
       {/* Kết quả parse -> xác nhận */}
-      <div className="rounded-sm border border-border px-4 py-3">
+      <div className="rounded-xl border border-border bg-card px-4 py-3.5 shadow-sm">
         <div className="flex items-baseline justify-between gap-2">
           <span className="pf-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
             Sẽ lưu
@@ -428,7 +428,7 @@ export function QuickVoiceAdd({ categories, onTransactionAdded }: QuickVoiceAddP
             type="button"
             onClick={() => voice.stop()}
             variant="outline"
-            className="h-12 flex-1 rounded-sm"
+            className="h-12 flex-1 rounded-xl"
           >
             <Square className="mr-2 h-4 w-4" fill="currentColor" /> Kết thúc
           </Button>
@@ -440,7 +440,7 @@ export function QuickVoiceAdd({ categories, onTransactionAdded }: QuickVoiceAddP
               if (voice.supported && !manualMode) voice.start();
             }}
             variant="outline"
-            className="h-12 flex-1 rounded-sm"
+            className="h-12 flex-1 rounded-xl"
             disabled={saving}
           >
             <RotateCcw className="mr-2 h-4 w-4" /> Nói lại
@@ -449,7 +449,7 @@ export function QuickVoiceAdd({ categories, onTransactionAdded }: QuickVoiceAddP
         <Button
           type="button"
           onClick={handleSave}
-          className="h-12 flex-[2] rounded-sm"
+          className="h-12 flex-[2] rounded-xl bg-emerald-600 text-white shadow-sm hover:bg-emerald-700"
           disabled={saving || amount <= 0}
         >
           {saving ? (

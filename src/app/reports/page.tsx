@@ -61,16 +61,14 @@ export default async function ReportsPage({
     <WorkspaceLayout
       withPanel={false}
     >
-      <div className="space-y-4">
+      <div className="space-y-5">
         <ReportFilters
           initialScope={scope}
           hasFamily={hasFamily}
           initialFrom={startDate}
         />
 
-        {/* Giữ các Panel rời nhau thay vì gộp gap-px: plaque khoét viền trên
-            nên mạch thép 1px dùng chung sẽ đọc ra như một lỗ thủng. */}
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 gap-5">
           <SpendingAnalysis
             summary={monthlySummary}
             categories={categoryStats}
@@ -78,7 +76,7 @@ export default async function ReportsPage({
 
           <DailyCashflowChart data={dailyStats || []} />
 
-          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
             <RecentTrendChart data={sixMonthTrend || []} />
             <YearlyComparisonChart data={yearlyComparison || []} currentYear={currentYear} />
           </div>

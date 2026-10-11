@@ -4,19 +4,15 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ============================================================================
-   HỆ MÀU "MÁY DÒ DÒNG TIỀN" — ba tầng token
+   HỆ MÀU "SẠCH & TÀI CHÍNH" — ba tầng token
    ----------------------------------------------------------------------------
-   Tầng 1 rendition : --pf-*        khai báo ở :root (giấy) / .dark (buồng)
+   Tầng 1 rendition : --pf-*        khai báo ở :root (sáng) / .dark (giữ nguyên)
    Tầng 2 cầu nối   : --background… + alias landing (--vacuum, --track-yellow…) ở :root
    Tầng 3 utility   : --color-pf-*  trong @theme inline
 
-   THỨ TỰ BA KHỐI DƯỚI ĐÂY LÀ LOAD-BEARING:
-     :root  →  .dark  →  cầu nối
-   .dark và :root cùng match <html> nên source order quyết định ai thắng.
-   Đảo thứ tự (hoặc để formatter sắp lại) sẽ vỡ dark mode mà không báo lỗi.
-
-   Landing dùng chung :root/.dark với app — cùng một công tắc theme. Các alias
-   tên cũ (--vacuum, --steel…) chỉ trỏ var(--pf-*) nên tự đổi theo rendition.
+   Bảng màu: nền trắng / slate-50, viền slate-200 mảnh, chữ slate-900.
+   Điểm nhấn chính emerald-600 (nút, tab, nav). Thu = xanh lá, chi = rose,
+   số dư = slate-900. Card bo rounded-xl, bóng đổ nhẹ.
    ========================================================================== */
 
 @theme inline {
@@ -77,28 +73,28 @@
   --radius-4xl: calc(var(--radius) + 16px);
 }
 
-/* ---- TẦNG 1a: BẢN GIẤY (mặc định khi <html> không có .dark) ---------- */
+/* ---- TẦNG 1a: BẢN SÁNG (mặc định khi <html> không có .dark) ------------- */
 :root {
-  --radius: 0.625rem;            /* GIỮ NGUYÊN: landing mượn nó cho rounded-sm (6px) */
+  --radius: 0.625rem;
   color-scheme: light;
 
-  --pf-bg:        #eef1f4;
-  --pf-surface:   #ffffff;
-  --pf-line:      #c8d2dc;
-  --pf-geometry:  #8a99ab;
-  --pf-subtle:    #e3e9ee;      /* nền dịu: muted / accent / secondary */
-  --pf-ink:       #55606e;
-  --pf-ink-strong:#0f1a24;
+  --pf-bg:        #f8fafc;   /* slate-50: nền trang */
+  --pf-surface:   #ffffff;   /* nền card */
+  --pf-line:      #e2e8f0;   /* slate-200: viền mảnh */
+  --pf-geometry:  #94a3b8;   /* slate-400: nét phụ */
+  --pf-subtle:    #f1f5f9;   /* slate-100: nền dịu (muted / accent / secondary) */
+  --pf-ink:       #475569;   /* slate-600: chữ phụ */
+  --pf-ink-strong:#0f172a;   /* slate-900: chữ chính / số dư */
 
-  /* mỗi vai hai khe: -* cho vệt đồ hoạ, -*-ink cho chữ (đủ tương phản trên giấy) */
-  --pf-expense:    #e0a800;  --pf-expense-ink: #8a6500;
-  --pf-budget:     #1b8fc0;  --pf-budget-ink:  #0f6d95;
-  --pf-over:       #d92b2b;  --pf-over-ink:    #b31b1b;
-  --pf-ok:         #22a35d;  --pf-ok-ink:      #127a44;
+  /* mỗi vai hai khe: -* cho vệt đồ hoạ, -*-ink cho chữ (đủ tương phản trên trắng) */
+  --pf-expense:    #f43f5e;  --pf-expense-ink: #e11d48;  /* chi tiêu: rose */
+  --pf-budget:     #0ea5e9;  --pf-budget-ink:  #0284c7;  /* ngân sách: sky */
+  --pf-over:       #f43f5e;  --pf-over-ink:    #e11d48;  /* vượt mức: rose */
+  --pf-ok:         #22c55e;  --pf-ok-ink:      #16a34a;  /* thu nhập / đạt: xanh lá */
 
-  /* thang "than nguội" cho donut danh mục: vàng nóng → thép nguội */
-  --pf-cat-1: #b88600; --pf-cat-2: #a37f1c; --pf-cat-3: #8d772f; --pf-cat-4: #776e3c;
-  --pf-cat-5: #616545; --pf-cat-6: #4d5b4c; --pf-cat-7: #3b5158; --pf-cat-8: #2c4356;
+  /* thang màu danh mục cho donut: emerald → rose → sky → amber → violet → teal → cam → slate */
+  --pf-cat-1: #10b981; --pf-cat-2: #f43f5e; --pf-cat-3: #0ea5e9; --pf-cat-4: #f59e0b;
+  --pf-cat-5: #8b5cf6; --pf-cat-6: #14b8a6; --pf-cat-7: #f97316; --pf-cat-8: #64748b;
 
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
@@ -166,27 +162,25 @@
   --card-foreground: var(--pf-ink-strong);
   --popover: var(--pf-surface);
   --popover-foreground: var(--pf-ink-strong);
-  /* Mực nằm TRÊN một mảng màu tín hiệu. Hằng số cho cả hai rendition: vàng bản
-     giấy (#e0a800) lẫn vàng buồng (#ffd23a) đều cần chữ gần đen. Đừng thay bằng
-     var(--pf-bg) — ở bản giấy nó là #eef1f4, chữ sáng trên vàng chỉ đạt ~1.9:1. */
-  --pf-on-signal: #0b0f14;
-  --primary: var(--pf-expense);
-  --primary-foreground: var(--pf-on-signal);
+  /* Mực nằm TRÊN nút chính emerald-600: chữ trắng. */
+  --pf-on-signal: #ffffff;
+  --primary: #059669;                 /* emerald-600: nút chính, điểm nhấn */
+  --primary-foreground: #ffffff;
   --secondary: var(--pf-subtle);
   --secondary-foreground: var(--pf-ink-strong);
   --muted: var(--pf-subtle);
   --muted-foreground: var(--pf-ink);
   --accent: var(--pf-subtle);
   --accent-foreground: var(--pf-ink-strong);
-  --destructive: var(--pf-over-ink);
+  --destructive: #e11d48;             /* rose-600 */
   --border: var(--pf-line);
   --input: var(--pf-line);
-  --ring: var(--pf-expense-ink);
-  --chart-1: var(--pf-expense);
-  --chart-2: var(--pf-budget);
-  --chart-3: var(--pf-over);
-  --chart-4: var(--pf-ok);
-  --chart-5: var(--pf-geometry);
+  --ring: #059669;
+  --chart-1: #10b981;
+  --chart-2: #f43f5e;
+  --chart-3: #0ea5e9;
+  --chart-4: #f59e0b;
+  --chart-5: #8b5cf6;
 }
 
 @layer base {
@@ -199,25 +193,9 @@
   }
 }
 
-/* ---- Luật không bóng đổ + panel vuông, áp cho component đi mượn ------
-   Khối này CỐ Ý không nằm trong @layer nào: CSS unlayered thắng mọi layer
-   nên gỡ được rounded-xl/shadow-sm cứng trong shadcn mà không cần fork
-   src/components/ui/* và không cần !important. */
-[data-slot="card"],
-[data-slot="dialog-content"],
-[data-slot="alert-dialog-content"],
-[data-slot="popover-content"],
-[data-slot="select-content"],
-[data-slot="dropdown-menu-content"],
-[data-slot="sheet-content"],
-[data-slot="table-container"] {
-  border-radius: var(--radius-sm);
-  box-shadow: none;
-}
-
 ::selection {
-  background: var(--pf-expense);
-  color: var(--pf-on-signal);
+  background: #059669;
+  color: #ffffff;
 }
 
 .pf-display {
@@ -236,21 +214,18 @@
   scroll-snap-align: start;
 }
 
-/* Hành động chính cấp trang: trên mobile hạ xuống viền vì FAB đã là khối vàng
-   đặc duy nhất (Luật một nguồn sáng, bản app). Từ lg trở lên không có FAB nên
-   nút này nhận lại vai đó. */
+/* Hành động chính cấp trang: nút đặc emerald-600, chữ trắng, bo tròn.
+   Dùng chung mọi breakpoint (không còn phân biệt mobile/desktop). */
 .pf-action {
-  background-color: transparent;
-  border: 1px solid var(--pf-expense);
-  color: var(--pf-expense-ink);
+  background-color: #059669;
+  border: 1px solid #059669;
+  border-radius: 0.75rem;
+  color: #ffffff;
 }
 
-@media (min-width: 1024px) {
-  .pf-action {
-    background-color: var(--pf-expense);
-    border-color: var(--pf-expense);
-    color: var(--pf-on-signal);
-  }
+.pf-action:hover {
+  background-color: #047857;
+  border-color: #047857;
 }
 
 .pf-mono {

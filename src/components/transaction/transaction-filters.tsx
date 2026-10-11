@@ -46,9 +46,9 @@ export function TransactionFilters({
 }: TransactionFiltersProps) {
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3">
       {!hideTrigger && (
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           <Button
             variant="outline"
             size="sm"
@@ -63,10 +63,10 @@ export function TransactionFilters({
 
       {/* Collapsible Filters Bar */}
       {showFilters && (
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full animate-in fade-in slide-in-from-top-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full animate-in fade-in slide-in-from-top-2">
           {/* Category Filter */}
           <Select value={categoryId} onValueChange={onCategoryChange}>
-            <SelectTrigger className="h-11 w-full rounded-sm sm:h-9 sm:w-[160px]">
+            <SelectTrigger className="h-11 w-full rounded-lg sm:h-9 sm:w-[160px]">
               <SelectValue placeholder="Danh mục" />
             </SelectTrigger>
             <SelectContent className="max-h-[300px]">
@@ -80,7 +80,7 @@ export function TransactionFilters({
           {/* Member Filter (Family Only) */}
           {scope === 'family' && onMemberChange && (
             <Select value={memberId} onValueChange={onMemberChange}>
-              <SelectTrigger className="h-11 w-full rounded-sm sm:h-9 sm:w-[160px]">
+              <SelectTrigger className="h-11 w-full rounded-lg sm:h-9 sm:w-[160px]">
                 <SelectValue placeholder="Thành viên" />
               </SelectTrigger>
               <SelectContent>

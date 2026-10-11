@@ -60,7 +60,7 @@ export function ReportFilters({
              nếu không màn báo cáo không nói nó đang xem tháng nào. */
           date={dateRange?.from ?? initialFrom}
           onDateChange={handleDateSelect}
-          className="h-11 w-full sm:h-9 sm:w-[200px]"
+          className="h-11 w-full rounded-lg sm:h-9 sm:w-[200px]"
           align="end"
         />
       </div>

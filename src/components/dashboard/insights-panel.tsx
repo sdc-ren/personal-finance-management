@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Panel } from "@/components/ui/panel";
+import { SectionCard } from "@/components/ui/finance";
 import { CountUpAnimation } from "@/components/ui/count-up-animation";
 import { formatCurrency } from "@/lib/format-currency";
 import { cn } from "@/lib/utils";
@@ -28,21 +28,56 @@ export function InsightsPanel({
   budgetUsage,
   overBudgetCount,
 }: InsightsPanelProps) {
+  const isOver = budgetUsage > 100;
+
   return (
-    <Panel plaque={title} className="p-4">
+    <SectionCard
+      title={title}
+      action={
+        showManageLink ? (
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/settings?tab=budget">Quản lý ngân sách</Link>
+          </Button>
+        ) : undefined
+      }
+    >
       <dl className="space-y-3 text-sm">
         <div className="flex items-center justify-between gap-3">
-          <dt className="text-muted-foreground">Ngân sách còn lại</dt>
+          <dt className="text-xs font-medium text-muted-foreground">Ngân sách còn lại</dt>
           <dd className="pf-mono font-semibold text-(--pf-budget-ink)">
             <CountUpAnimation end={remainingBudget} formatNumber={formatCurrency} />
           </dd>
         </div>
-        <div className="flex items-center justify-between gap-3">
-          <dt className="text-muted-foreground">Mức sử dụng ngân sách</dt>
-          <dd className="pf-mono font-semibold text-foreground">{budgetUsage}%</dd>
+        <div>
+          <div className="flex items-center justify-between gap-3">
+            <dt className="text-xs font-medium text-muted-foreground">Mức sử dụng ngân sách</dt>
+            <dd
+              className={cn(
+                "pf-mono font-semibold",
+                isOver ? "text-(--pf-over-ink)" : "text-foreground"
+              )}
+            >
+              {budgetUsage}%
+            </dd>
+          </div>
+          <div
+            className="mt-2 h-2 overflow-hidden rounded-full bg-muted"
+            role="progressbar"
+            aria-valuenow={budgetUsage}
+            aria-valuemin={0}
+            aria-valuemax={100}
+          >
+            <div
+              className={cn(
+                "h-full rounded-full transition-all",
+                isOver ? "bg-rose-500" : "bg-emerald-500"
+              )}
+              style={{ width: `${Math.min(budgetUsage, 100)}%` }}
+            />
+          </div>
         </div>
         <div className="flex items-center justify-between gap-3">
-          <dt className="text-muted-foreground">Danh mục vượt ngân sách</dt>
+          <dt className="text-xs font-medium text-muted-foreground">Danh mục vượt ngân sách</dt>
           <dd
             className={cn(
               "pf-mono font-semibold",
@@ -53,12 +88,6 @@ export function InsightsPanel({
           </dd>
         </div>
       </dl>
-
-      {showManageLink && (
-        <Button variant="outline" asChild className="mt-4 w-full">
-          <Link href="/settings?tab=budget">Quản lý ngân sách</Link>
-        </Button>
-      )}
-    </Panel>
+    </SectionCard>
   );
 }

@@ -1,12 +1,18 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { TransactionWithCategory, deleteTransaction } from "@/actions/transaction";
-import { Edit, Calendar, Tag, Hash, Wallet, CreditCard, Trash2, Loader2 } from "lucide-react";
+import {
+  Edit,
+  Loader2,
+  Trash2,
+} from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { categoryIcon, CategoryGlyph } from "./transaction-item";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -44,6 +50,18 @@ interface TransactionDetailsModalProps {
   onDeleted?: () => void;
 }
 
+/** Một hàng label/value trong phần chi tiết. */
+function DetailRow({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="flex items-start justify-between gap-4 py-2">
+      <dt className="shrink-0 pt-0.5 text-xs font-medium text-muted-foreground">
+        {label}
+      </dt>
+      <dd className="min-w-0 text-right text-sm text-foreground">{children}</dd>
+    </div>
+  );
+}
+
 export function TransactionDetailsModal({
   transaction,
   open,
@@ -79,78 +97,64 @@ export function TransactionDetailsModal({
 
   if (!transaction) return null;
 
-  // Cùng ngữ pháp sổ ledger với transaction-item: rail phương thức + số có dấu
-  const rail =
-    transaction.paymentMethod === "TRANSFER" && transaction.transferCode
-      ? `CK·${transaction.transferCode.slice(-4)}`
-      : transaction.paymentMethod === "TRANSFER"
-        ? "CK"
-        : "TM";
+  const isIncome = transaction.type === "INCOME";
+  const icon = categoryIcon(transaction.category.name);
 
   const content = (
     <div className="space-y-6 py-4">
-      {/* Dòng số tiền — panel hairline, không icon tròn */}
-      <div className="flex items-center gap-3 border border-border px-4 py-4">
-        <span className="pf-mono w-16 shrink-0 text-[11px] tracking-wide text-muted-foreground">
-          {rail}
-        </span>
-        <p className="pf-mono min-w-0 flex-1 text-[11px] tracking-[0.14em] text-muted-foreground uppercase">
-          {transaction.type === "INCOME" ? "Thu nhập" : "Chi tiêu"}
-        </p>
-        <p
+      {/* Panel số tiền — icon danh mục tint + số lớn tabular-nums */}
+      <div className="flex items-center gap-4 rounded-xl border border-border bg-slate-50/70 px-4 py-5">
+        <span
           className={cn(
-            "pf-mono shrink-0 text-2xl font-semibold whitespace-nowrap",
-            transaction.type === "INCOME"
-              ? "text-(--pf-ok-ink)"
-              : "text-(--pf-expense-ink)"
+            "flex h-12 w-12 shrink-0 items-center justify-center rounded-full",
+            isIncome
+              ? "bg-emerald-100 text-emerald-700"
+              : "bg-rose-100 text-rose-700"
           )}
         >
-          {formatSignedCurrency(Number(transaction.amount), transaction.type)}
-        </p>
-      </div>
-
-      {/* Details Grid */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <Hash className="h-5 w-5 text-muted-foreground" />
-          <p className="text-base flex-1">{transaction.description}</p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Tag className="h-5 w-5 text-muted-foreground" />
-          <div className="pf-mono rounded-sm border border-border px-2.5 py-1 text-xs tracking-wide text-foreground uppercase">
-            {transaction.category.name}
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          {transaction.paymentMethod === "TRANSFER" ? (
-            <CreditCard className="h-5 w-5 text-muted-foreground" />
-          ) : (
-            <Wallet className="h-5 w-5 text-muted-foreground" />
-          )}
-          <div className="flex flex-col">
-            <span className="text-base">
-              {transaction.paymentMethod === "TRANSFER" ? "Chuyển khoản" : "Tiền mặt"}
-            </span>
-            {transaction.paymentMethod === "TRANSFER" && transaction.transferCode && (
-              <span className="text-xs text-muted-foreground">
-                Mã: {transaction.transferCode}
-              </span>
+          <CategoryGlyph icon={icon} className="h-5 w-5" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-medium text-muted-foreground">
+            {isIncome ? "Thu nhập" : "Chi tiêu"}
+          </p>
+          <p
+            className={cn(
+              "truncate text-2xl font-semibold tabular-nums sm:text-3xl",
+              isIncome ? "text-(--pf-ok-ink)" : "text-(--pf-expense-ink)"
             )}
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Calendar className="h-5 w-5 text-muted-foreground" />
-          <p className="text-base">
-            {format(new Date(transaction.date), "PPP", { locale: vi })}
+          >
+            {formatSignedCurrency(Number(transaction.amount), transaction.type)}
           </p>
         </div>
+      </div>
+
+      {/* Chi tiết dạng hàng label/value */}
+      <dl>
+        <DetailRow label="Mô tả">
+          <span className="font-medium">{transaction.description}</span>
+        </DetailRow>
+
+        <DetailRow label="Danh mục">{transaction.category.name}</DetailRow>
+
+        <DetailRow label="Phương thức">
+          <span className="block">
+            {transaction.paymentMethod === "TRANSFER" ? "Chuyển khoản" : "Tiền mặt"}
+          </span>
+          {transaction.paymentMethod === "TRANSFER" && transaction.transferCode && (
+            <span className="block text-xs text-muted-foreground">
+              Mã: {transaction.transferCode}
+            </span>
+          )}
+        </DetailRow>
+
+        <DetailRow label="Ngày">
+          {format(new Date(transaction.date), "EEEE, dd 'tháng' MM, yyyy", { locale: vi })}
+        </DetailRow>
 
         {readOnly && transaction.user && (
-          <div className="flex items-center gap-3">
-            <div className="h-5 w-5 flex items-center justify-center">
+          <DetailRow label="Người ghi">
+            <span className="inline-flex items-center justify-end gap-2">
               {transaction.user.image ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img
@@ -159,15 +163,15 @@ export function TransactionDetailsModal({
                   className="h-5 w-5 rounded-full object-cover"
                 />
               ) : (
-                <div className="h-5 w-5 rounded-full bg-muted flex items-center justify-center text-[10px] font-bold">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-muted text-[10px] font-bold">
                   {transaction.user.name?.[0]?.toUpperCase() || "U"}
-                </div>
+                </span>
               )}
-            </div>
-            <p className="text-base">{transaction.user.name || "Không rõ"}</p>
-          </div>
+              {transaction.user.name || "Không rõ"}
+            </span>
+          </DetailRow>
         )}
-      </div>
+      </dl>
 
       {/* Hành động */}
       {!readOnly && (
@@ -180,9 +184,9 @@ export function TransactionDetailsModal({
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button
-                variant="ghost"
+                variant="destructive"
                 disabled={deleting}
-                className="h-11 w-full text-destructive hover:bg-destructive/10 hover:text-destructive"
+                className="h-11 w-full"
               >
                 {deleting ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

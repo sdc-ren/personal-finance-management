@@ -6,7 +6,7 @@ import { getBudgetProgress } from "@/actions/budget";
 import { getSystemCategories } from "@/actions/admin";
 import { getQuickPresets } from "@/actions/quick-preset";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Panel, SteelGrid, Readout } from "@/components/ui/panel";
+import { SectionCard } from "@/components/ui/finance";
 import { BudgetList } from "@/components/budget/budget-list";
 import { CategoryClient } from "@/components/admin/category-client";
 import { QuickPresetManager } from "@/components/settings/quick-preset-manager";
@@ -39,9 +39,15 @@ export default async function SettingsPage({
   const resolvedSearchParams = await searchParams;
   const defaultTab = (resolvedSearchParams.tab as string) || "budget";
 
+  const accountRows = [
+    { label: "Tên hiển thị", value: session.user?.name || "Chưa cập nhật" },
+    { label: "Email", value: session.user?.email || "Chưa cập nhật" },
+    { label: "Vai trò", value: session.user?.role || "—" },
+  ];
+
   return (
     <WorkspaceLayout withPanel={false}>
-      <Tabs defaultValue={defaultTab} className="gap-4">
+      <Tabs defaultValue={defaultTab} className="space-y-4">
         <TabsList className={TAB_LIST_CLASS}>
           <TabsTrigger value="general" className={TAB_TRIGGER}>
             Thông tin chung
@@ -60,17 +66,25 @@ export default async function SettingsPage({
         </TabsList>
 
         <TabsContent value="general">
-          <Panel plaque="Thông tin tài khoản" className="p-4 sm:p-5">
+          <SectionCard title="Thông tin tài khoản">
             <p className="text-sm text-muted-foreground">Thông tin cá nhân và bảo mật</p>
-            <SteelGrid className="mt-4 grid-cols-1 sm:grid-cols-3">
-              <Readout label="Tên hiển thị" wrap>{session.user?.name || "Chưa cập nhật"}</Readout>
-              <Readout label="Email" wrap>{session.user?.email}</Readout>
-              <Readout label="Vai trò" wrap>{session.user?.role}</Readout>
-            </SteelGrid>
-            <p className="mt-4 text-xs text-muted-foreground">
+            <dl className="mt-2 divide-y divide-border">
+              {accountRows.map((row) => (
+                <div
+                  key={row.label}
+                  className="flex items-center justify-between gap-4 py-3"
+                >
+                  <dt className="shrink-0 text-sm text-muted-foreground">{row.label}</dt>
+                  <dd className="min-w-0 break-all text-right text-sm font-medium text-foreground">
+                    {row.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+            <p className="text-xs text-muted-foreground">
               Hiện tại bạn chưa thể thay đổi thông tin này trực tiếp.
             </p>
-          </Panel>
+          </SectionCard>
         </TabsContent>
 
         <TabsContent value="budget">
@@ -78,19 +92,19 @@ export default async function SettingsPage({
         </TabsContent>
 
         <TabsContent value="quick-add">
-          <Panel plaque="Nút ghi nhanh" className="p-4 sm:p-5">
+          <SectionCard title="Nút ghi nhanh">
             <QuickPresetManager categories={categories} initialPresets={quickPresets} />
-          </Panel>
+          </SectionCard>
         </TabsContent>
 
         {isAdmin && (
           <TabsContent value="categories">
-            <Panel plaque="Quản lý danh mục hệ thống" className="p-4 sm:p-5">
+            <SectionCard title="Quản lý danh mục hệ thống">
               <p className="text-sm text-muted-foreground">
                 Thêm, sửa, xóa các danh mục mặc định của hệ thống.
               </p>
               <CategoryClient categories={systemCategories} />
-            </Panel>
+            </SectionCard>
           </TabsContent>
         )}
       </Tabs>

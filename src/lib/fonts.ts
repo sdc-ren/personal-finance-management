@@ -1,20 +1,24 @@
-import { Chakra_Petch, Roboto_Mono, Saira } from "next/font/google";
+import { Inter } from "next/font/google";
 
-/** Font của thế giới "máy dò" — dùng chung cho landing và trang đăng nhập/đăng ký. */
-export const pfDisplay = Chakra_Petch({
+/**
+ * Font của phong cách "Sạch & tài chính": Inter cho mọi vai —
+ * tiêu đề semibold, chữ thường và số tiền (tabular-nums qua class .pf-mono).
+ */
+export const pfDisplay = Inter({
   subsets: ["latin", "vietnamese"],
-  weight: ["500", "600", "700"],
+  weight: ["600", "700"],
   variable: "--font-pf-display",
 });
 
-export const pfMono = Roboto_Mono({
+export const pfMono = Inter({
   subsets: ["latin", "vietnamese"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-pf-mono",
 });
 
-export const pfBody = Saira({
+export const pfBody = Inter({
   subsets: ["latin", "vietnamese"],
+  weight: ["400", "500", "600"],
   variable: "--font-pf-body",
 });
 

@@ -46,7 +46,7 @@ export function WorkspaceLayout({
           {withPanel ? (
             <section
               className={cn(
-                "flex-1 min-h-0 border border-border bg-card",
+                "flex-1 min-h-0 overflow-hidden rounded-2xl border border-border bg-card shadow-sm",
                 contentInnerClassName
               )}
             >
