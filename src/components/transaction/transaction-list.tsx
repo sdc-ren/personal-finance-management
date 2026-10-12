@@ -3,7 +3,9 @@
 import { TransactionWithCategory } from "@/actions/transaction";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TransactionGroup } from "./transaction-group";
-import { GROUP_GAP, GROUP_HEADER_H, ROW_H, getGroupHeight } from "./transaction-metrics";
+import { TransactionItem } from "./transaction-item";
+import { FLAT_HEADER_H, GROUP_GAP, GROUP_HEADER_H, ROW_H, getGroupHeight } from "./transaction-metrics";
+import { relativeDayLabel } from "@/lib/app-time";
 import { RingMark } from "@/components/brand/ring-mark";
 import { useRef, useMemo, useEffect, useState } from "react";
 import { isSameDay } from "date-fns";
@@ -16,6 +18,13 @@ interface TransactionListProps {
   readOnly?: boolean;
   isLoading?: boolean;
   isFullPage?: boolean;
+  /**
+   * Kiểu hiển thị:
+   * - "card": mỗi ngày là một card riêng (mặc định, dùng ở trang Lịch sử).
+   * - "flat": danh sách phẳng liền mạch — header ngày gọn + dòng giao dịch,
+   *   không chia card (dùng ở dashboard).
+   */
+  variant?: "card" | "flat";
 }
 
 // Helper to group transactions by date
@@ -42,13 +51,35 @@ export function TransactionList({
   onView,
   readOnly = false,
   isLoading = false,
-  isFullPage = false
+  isFullPage = false,
+  variant = "card",
 }: TransactionListProps) {
   const parentRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<List>(null);
   const [containerHeight, setContainerHeight] = useState(isFullPage ? 600 : 400);
 
   const groupedTransactions = useMemo(() => groupTransactionsByDate(transactions), [transactions]);
+
+  // Variant "flat": trải phẳng thành các dòng header/item để virtual hoá liền mạch
+  type FlatRow =
+    | { kind: "header"; key: string; label: string; count: number }
+    | { kind: "item"; key: string; transaction: TransactionWithCategory };
+  const flatRows: FlatRow[] = useMemo(() => {
+    if (variant !== "flat") return [];
+    return groupedTransactions.flatMap((g) => [
+      {
+        kind: "header" as const,
+        key: `h-${g.date.getTime()}`,
+        label: relativeDayLabel(g.date),
+        count: g.transactions.length,
+      },
+      ...g.transactions.map((t) => ({
+        kind: "item" as const,
+        key: t.id,
+        transaction: t,
+      })),
+    ]);
+  }, [groupedTransactions, variant]);
 
   // Calculate container height
   useEffect(() => {
@@ -79,17 +110,47 @@ export function TransactionList({
   }, [isFullPage]);
 
   // Chiều cao lấy từ hợp đồng chung với component, không ước lượng
-  const getItemSize = (index: number) =>
-    getGroupHeight(groupedTransactions[index].transactions.length);
+  const getItemSize = (index: number) => {
+    if (variant === "flat") {
+      return flatRows[index].kind === "header" ? FLAT_HEADER_H : ROW_H;
+    }
+    return getGroupHeight(groupedTransactions[index].transactions.length);
+  };
 
   // VariableSizeList cache offset theo index; đổi bộ lọc là nhóm khác đi nhưng
   // cache cũ vẫn được dùng → dòng chồng lấn hoặc chừa khoảng trống.
   useEffect(() => {
     listRef.current?.resetAfterIndex(0, true);
-  }, [groupedTransactions]);
+  }, [groupedTransactions, flatRows, variant]);
 
   // Row renderer for react-window
   const Row = ({ index, style }: { index: number; style: React.CSSProperties }) => {
+    if (variant === "flat") {
+      const row = flatRows[index];
+      if (row.kind === "header") {
+        return (
+          <div style={style} className="flex items-center gap-2.5 px-1">
+            <span className="text-[11px] font-bold uppercase tracking-wider whitespace-nowrap text-muted-foreground">
+              {row.label}
+            </span>
+            <span className="h-px flex-1 bg-border/70" />
+            <span className="text-[11px] whitespace-nowrap text-muted-foreground/70">
+              {row.count} khoản
+            </span>
+          </div>
+        );
+      }
+      return (
+        <div style={style}>
+          <TransactionItem
+            transaction={row.transaction}
+            onEdit={onEdit}
+            onView={onView}
+            readOnly={readOnly}
+          />
+        </div>
+      );
+    }
     const group = groupedTransactions[index];
     return (
       <div style={{ ...style, paddingBottom: GROUP_GAP }}>
@@ -156,10 +217,11 @@ export function TransactionList({
       <List
         ref={listRef}
         height={isFullPage ? containerHeight : 400}
-        itemCount={groupedTransactions.length}
+        itemCount={variant === "flat" ? flatRows.length : groupedTransactions.length}
         itemSize={getItemSize}
         width="100%"
-        overscanCount={2}
+        overscanCount={6}
+        className="nice-scroll"
       >
         {Row}
       </List>

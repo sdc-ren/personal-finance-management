@@ -168,6 +168,7 @@ export function DashboardClient({ categories, transactions, stats }: DashboardCl
                     onEdit={handleEdit}
                     onView={handleView}
                     isFullPage
+                    variant="flat"
                   />
                 </div>
               </SectionCard>

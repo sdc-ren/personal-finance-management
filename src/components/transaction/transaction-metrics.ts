@@ -15,6 +15,9 @@ export const ROW_H = 48;
 /** Header ngày của nhóm. */
 export const GROUP_HEADER_H = 36;
 
+/** Header ngày dạng phẳng (variant "flat"): nhãn + đường kẻ, gọn hơn card. */
+export const FLAT_HEADER_H = 32;
+
 /**
  * Đường kẻ giữa hai dòng (divide-y 1px).
  *

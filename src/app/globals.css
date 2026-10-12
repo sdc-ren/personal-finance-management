@@ -243,3 +243,31 @@
 .animate-progress-indeterminate {
   animation: progress-indeterminate 1.5s infinite linear;
 }
+
+/* Thanh cuộn mảnh, tinh tế cho danh sách cuộn trong card (virtual list). */
+.nice-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(203 213 225) transparent;
+}
+.nice-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.nice-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.nice-scroll::-webkit-scrollbar-thumb {
+  background: rgb(203 213 225);
+  border-radius: 9999px;
+}
+.nice-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgb(148 163 184);
+}
+.dark .nice-scroll {
+  scrollbar-color: rgb(51 65 85) transparent;
+}
+.dark .nice-scroll::-webkit-scrollbar-thumb {
+  background: rgb(51 65 85);
+}
+.dark .nice-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgb(71 85 105);
+}
