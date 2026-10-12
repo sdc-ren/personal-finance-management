@@ -6,9 +6,9 @@ import type { Category } from "@prisma/client";
 import { SectionCard } from "@/components/ui/finance";
 import { Button } from "@/components/ui/button";
 import {
-  getQuickPresets,
+  getQuickPresetsCached,
   type QuickPresetWithCategory,
-} from "@/actions/quick-preset";
+} from "@/lib/quick-presets-cache";
 import { AddTransaction } from "./add-transaction";
 import { presetIcon } from "./quick-voice-add";
 import { cn } from "@/lib/utils";
@@ -42,7 +42,7 @@ export function QuickAddPanel({
 
   useEffect(() => {
     let cancelled = false;
-    getQuickPresets()
+    getQuickPresetsCached()
       .then((list) => {
         if (!cancelled) setPresets(list);
       })

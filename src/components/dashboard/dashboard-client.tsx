@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Plus } from "lucide-react";
@@ -18,6 +18,7 @@ import { Page, PageHeader, KpiRow, ContentGrid } from "@/components/ui/page";
 import { TransactionWithCategory } from "@/actions/transaction";
 import { isSameMonth, format } from "date-fns";
 import { TransactionList } from "@/components/transaction/transaction-list";
+import { prefetchQuickPresets } from "@/lib/quick-presets-cache";
 import { vi } from "date-fns/locale";
 
 export interface BudgetProgress {
@@ -52,6 +53,11 @@ export function DashboardClient({ categories, transactions, stats }: DashboardCl
   const [viewingTransaction, setViewingTransaction] = useState<TransactionWithCategory | null>(null);
   const [isViewOpen, setIsViewOpen] = useState(false);
   const [, startRefreshTransition] = useTransition();
+
+  // Prefetch preset từ lúc trang mount — mở dialog "Ghi giao dịch" là có item ngay
+  useEffect(() => {
+    prefetchQuickPresets();
+  }, []);
 
   const handleEdit = (transaction: TransactionWithCategory) => {
     setEditingTransaction(transaction);

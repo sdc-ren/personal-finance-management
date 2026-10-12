@@ -39,6 +39,7 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TAB_LIST, TAB_TRIGGER } from "@/lib/tab-styles";
 import { QUICK_PRESET_ICONS } from "@/lib/quick-presets";
+import { invalidateQuickPresetsCache } from "@/lib/quick-presets-cache";
 import {
   getQuickPresets,
   createQuickPreset,
@@ -83,6 +84,7 @@ export function QuickPresetManager({ categories, initialPresets }: Props) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   async function reload() {
+    invalidateQuickPresetsCache();
     setPresets(await getQuickPresets());
   }
 

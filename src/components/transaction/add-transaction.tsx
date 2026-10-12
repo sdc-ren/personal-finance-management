@@ -26,6 +26,7 @@ import { TransactionForm } from "./transaction-form";
 import { QuickVoiceAdd } from "./quick-voice-add";
 import { TAB_LIST, TAB_TRIGGER } from "@/lib/tab-styles";
 import { cn } from "@/lib/utils";
+import { prefetchQuickPresets } from "@/lib/quick-presets-cache";
 import { useRouter } from "next/navigation";
 
 interface AddTransactionProps {
@@ -121,7 +122,11 @@ export function AddTransaction({ categories, initialData, open: controlledOpen, 
         <Dialog open={open} onOpenChange={handleOpenChange}>
         {!isControlled && (
           <DialogTrigger asChild>
-            <button className={triggerClass}>
+            <button
+              className={triggerClass}
+              onMouseEnter={prefetchQuickPresets}
+              onFocus={prefetchQuickPresets}
+            >
               <Plus className="h-4 w-4" />
               <span className="pf-display text-sm font-semibold tracking-wide">Ghi giao dịch</span>
             </button>
@@ -149,7 +154,11 @@ export function AddTransaction({ categories, initialData, open: controlledOpen, 
     <Sheet open={open} onOpenChange={handleOpenChange}>
       {!isControlled && (
         <SheetTrigger asChild>
-          <button className={triggerClass}>
+          <button
+            className={triggerClass}
+            onMouseEnter={prefetchQuickPresets}
+            onFocus={prefetchQuickPresets}
+          >
             <Plus className="h-4 w-4" />
             <span className="pf-display text-sm font-semibold tracking-wide">Ghi giao dịch</span>
           </button>

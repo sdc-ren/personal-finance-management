@@ -45,9 +45,9 @@ import {
   type VoiceParseResult,
 } from "@/lib/voice-parse";
 import {
-  getQuickPresets,
+  getQuickPresetsCached,
   type QuickPresetWithCategory,
-} from "@/actions/quick-preset";
+} from "@/lib/quick-presets-cache";
 import { createTransaction } from "@/actions/transaction";
 
 /** Map icon key (lưu trong DB) -> component lucide. */
@@ -106,10 +106,11 @@ export function QuickVoiceAdd({ categories, onTransactionAdded }: QuickVoiceAddP
 
   const voice = useVoiceInput({ lang: "vi-VN" });
 
-  // Nạp preset 1 lần khi mở — có catch để lỗi DB không treo skeleton mãi
+  // Nạp preset 1 lần khi mở — có catch để lỗi DB không treo skeleton mãi.
+  // Dùng cache dùng chung: nếu trang đã prefetch thì mở dialog là có item ngay.
   useEffect(() => {
     let cancelled = false;
-    getQuickPresets()
+    getQuickPresetsCached()
       .then((list) => {
         if (!cancelled) setPresets(list);
       })

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddTransaction } from "@/components/transaction/add-transaction";
 import { TransactionList } from "@/components/transaction/transaction-list";
+import { prefetchQuickPresets } from "@/lib/quick-presets-cache";
 import { Category } from "@prisma/client";
 import { TransactionWithCategory } from "@/actions/transaction";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -42,6 +43,11 @@ export function TransactionsClient({
   const [viewingTransaction, setViewingTransaction] = useState<TransactionWithCategory | null>(null);
   const [isViewOpen, setIsViewOpen] = useState(false);
   const [showFilters, setShowFilters] = useState(true);
+
+  // Prefetch preset từ lúc trang mount — mở dialog "Ghi giao dịch" là có item ngay
+  useEffect(() => {
+    prefetchQuickPresets();
+  }, []);
 
   // Use URL filters hook
   const { updateFilters, updateDateRange, dateRange, isPending, searchParams } = useUrlFilters("/transactions");

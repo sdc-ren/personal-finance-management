@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import type { Category } from "@prisma/client";
 import { getCategories } from "@/actions/transaction";
+import { prefetchQuickPresets } from "@/lib/quick-presets-cache";
 import { AddTransaction } from "@/components/transaction/add-transaction";
 
 /**
@@ -24,6 +25,8 @@ export function QuickAddFab() {
   const router = useRouter();
 
   async function handleOpen() {
+    // preset prefetch từ lúc bấm — dialog mở ra là có item ngay
+    prefetchQuickPresets();
     if (categories) {
       setOpen(true);
       return;
@@ -47,6 +50,8 @@ export function QuickAddFab() {
       <button
         type="button"
         onClick={handleOpen}
+        onMouseEnter={prefetchQuickPresets}
+        onTouchStart={prefetchQuickPresets}
         disabled={loading}
         aria-label="Ghi giao dịch"
         className="flex h-14 w-14 -translate-y-3 items-center justify-center rounded-full bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 transition-all hover:bg-emerald-700 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
