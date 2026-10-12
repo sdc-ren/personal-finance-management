@@ -1,12 +1,11 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { AddTransaction } from "@/components/transaction/add-transaction";
 import { QuickAddPanel } from "@/components/transaction/quick-add-panel";
-import { TransactionItem } from "@/components/transaction/transaction-item";
 import { Category } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { CountUpAnimation } from "@/components/ui/count-up-animation";
@@ -18,7 +17,7 @@ import { Page, PageHeader, KpiRow, ContentGrid } from "@/components/ui/page";
 // Match TransactionList requirements
 import { TransactionWithCategory } from "@/actions/transaction";
 import { isSameMonth, format } from "date-fns";
-import { groupByDay } from "@/lib/app-time";
+import { TransactionList } from "@/components/transaction/transaction-list";
 import { vi } from "date-fns/locale";
 
 export interface BudgetProgress {
@@ -53,6 +52,11 @@ export function DashboardClient({ categories, transactions, stats }: DashboardCl
   const [viewingTransaction, setViewingTransaction] = useState<TransactionWithCategory | null>(null);
   const [isViewOpen, setIsViewOpen] = useState(false);
   const [, startRefreshTransition] = useTransition();
+
+  const handleEdit = (transaction: TransactionWithCategory) => {
+    setEditingTransaction(transaction);
+    setIsEditOpen(true);
+  };
 
   const handleView = (transaction: TransactionWithCategory) => {
     setViewingTransaction(transaction);
@@ -97,10 +101,6 @@ export function DashboardClient({ categories, transactions, stats }: DashboardCl
   const isIncrease = expensePercent > 0;
   const isDecrease = expensePercent < 0;
 
-  const groupedRecent = useMemo(
-    () => groupByDay(transactions.slice(0, 5)),
-    [transactions]
-  );
   const todayLabel = format(new Date(), "EEEE, d 'tháng' M", { locale: vi });
 
   return (
@@ -151,7 +151,9 @@ export function DashboardClient({ categories, transactions, stats }: DashboardCl
                 />
               </KpiRow>
 
-              {/* Giao dịch gần đây — trọng tâm của trang */}
+              {/* Giao dịch gần đây — trọng tâm của trang: toàn bộ giao dịch từ
+                  đầu tháng tới hiện tại, chiều cao cố định theo màn hình,
+                  virtual scroll khi nhiều (dùng chung TransactionList). */}
               <SectionCard
                 title="Giao dịch gần đây"
                 action={
@@ -160,24 +162,14 @@ export function DashboardClient({ categories, transactions, stats }: DashboardCl
                   </Button>
                 }
               >
-                {groupedRecent.length === 0 ? (
-                  <p className="py-8 text-center text-sm text-muted-foreground">
-                    Chưa có giao dịch nào trong tháng.
-                  </p>
-                ) : (
-                  <div className="flex flex-col">
-                    {groupedRecent.map((group) => (
-                      <div key={group.key}>
-                        <p className="sticky top-0 bg-card px-1 pb-1 pt-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground first:pt-1">
-                          {group.label}
-                        </p>
-                        {group.items.map((t) => (
-                          <TransactionItem key={t.id} transaction={t} onView={handleView} />
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <div className="h-[calc(100vh-360px)] min-h-[320px]">
+                  <TransactionList
+                    transactions={transactions}
+                    onEdit={handleEdit}
+                    onView={handleView}
+                    isFullPage
+                  />
+                </div>
               </SectionCard>
             </>
           }

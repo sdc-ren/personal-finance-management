@@ -116,24 +116,3 @@ export function relativeDayLabel(date: Date): string {
   if (diff === -2) return "Hôm kia";
   return format(date, "EEEE, d/M", { locale: vi });
 }
-
-/**
- * Gom danh sách có trường `date` theo từng ngày (ngày mới nhất trước),
- * mỗi nhóm kèm nhãn hiển thị từ `relativeDayLabel`.
- */
-export function groupByDay<T extends { date: Date }>(
-  items: T[]
-): { key: string; label: string; items: T[] }[] {
-  const groups = new Map<string, { label: string; items: T[] }>();
-  for (const item of items) {
-    const d = new Date(item.date);
-    const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-    let g = groups.get(key);
-    if (!g) {
-      g = { label: relativeDayLabel(d), items: [] };
-      groups.set(key, g);
-    }
-    g.items.push(item);
-  }
-  return [...groups.entries()].map(([key, g]) => ({ key, ...g }));
-}

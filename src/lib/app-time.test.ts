@@ -5,7 +5,6 @@ import {
   getAppDateParts,
   getAppMonthRange,
   getPreviousAppMonthRange,
-  groupByDay,
   parseDateParam,
   relativeDayLabel,
 } from "@/lib/app-time";
@@ -45,7 +44,7 @@ describe("app-time", () => {
   });
 });
 
-describe("relativeDayLabel + groupByDay", () => {
+describe("relativeDayLabel", () => {
   it("labels today/yesterday/day-before relatively", () => {
     const now = new Date();
     const mk = (offsetDays: number) => {
@@ -59,17 +58,4 @@ describe("relativeDayLabel + groupByDay", () => {
     expect(relativeDayLabel(mk(-5))).toMatch(/, \d{1,2}\/\d{1,2}$/);
   });
 
-  it("groups items by day, newest first", () => {
-    const now = new Date();
-    const mk = (offsetDays: number, id: string) => {
-      const d = new Date(now);
-      d.setDate(d.getDate() + offsetDays);
-      return { id, date: d };
-    };
-    const groups = groupByDay([mk(0, "a"), mk(-1, "b"), mk(0, "c")]);
-    expect(groups).toHaveLength(2);
-    expect(groups[0].label).toBe("Hôm nay");
-    expect(groups[0].items.map((i) => i.id)).toEqual(["a", "c"]);
-    expect(groups[1].label).toBe("Hôm qua");
-  });
 });
