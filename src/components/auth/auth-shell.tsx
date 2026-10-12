@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { DetectorScene } from "@/components/landing/detector-scene";
+import { AuthVisual } from "@/components/auth/auth-visual";
 import { pfFontVars } from "@/lib/fonts";
 import { RingMark } from "@/components/brand/ring-mark";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
@@ -46,13 +46,10 @@ export function AuthShell({ mode, title, description, children }: AuthShellProps
         </header>
 
         <div className="flex flex-1 flex-col gap-10 px-4 py-8 sm:px-6 lg:grid lg:grid-cols-[1fr_minmax(0,480px)] lg:items-center lg:gap-16 lg:px-10 lg:py-12 xl:px-16">
-          {/* Cột trái: máy dò, chỉ có chỗ trên màn rộng */}
+          {/* Cột trái: visual đúng theme mới, chỉ hiện trên màn rộng */}
           <aside className="hidden lg:block">
             <div className="mx-auto max-w-lg">
-              <DetectorScene className="h-auto w-full" />
-              <p className="pf-mono mt-4 text-[11px] tracking-[0.14em] text-(--text-steel)">
-                TÂM = TIỀN THÁNG CỦA BẠN · MỖI ĐƯỜNG BAY = MỘT KHOẢN CHI · SỐ LIỆU MINH HOẠ
-              </p>
+              <AuthVisual className="h-auto w-full" />
               <dl className="pf-mono mt-4 grid max-w-md grid-cols-3 gap-px border border-(--steel) bg-(--steel)">
                 {proofPoints.map((p) => (
                   <div key={p.label} className="bg-(--vacuum) p-3">
