@@ -13,7 +13,6 @@ import { CountUpAnimation } from "@/components/ui/count-up-animation";
 import { TransactionDetailsModal } from "@/components/transaction/transaction-details-modal";
 import { StatCard, SectionCard } from "@/components/ui/finance";
 import { formatCurrency } from "@/lib/format-currency";
-import { SpendingPieChart } from "./spending-pie-chart";
 import { Page, PageHeader, KpiRow, ContentGrid } from "@/components/ui/page";
 
 // Match TransactionList requirements
@@ -37,17 +36,16 @@ interface DashboardClientProps {
   };
   familyMembers?: { id: string; name: string | null; image: string | null }[];
   budgetProgress?: BudgetProgress[];
-  categoryStats: { name: string; value: number }[];
 }
 
 /**
- * Màn Tổng quan — đúng cấu trúc bản preview đã duyệt:
+ * Màn Tổng quan:
  * - Desktop: lưới `minmax(0,1fr) 326px`. Cột trái: KPI → Giao dịch gần đây
- *   (trọng tâm) → Chi tiêu theo nhóm (bổ trợ). Cột phải: panel Ghi nhanh sticky.
- * - Mobile: một cột KPI → Giao dịch gần đây → Chi tiêu theo nhóm (hết).
+ *   (trọng tâm). Cột phải: panel Ghi nhanh sticky.
+ * - Mobile: một cột KPI → Giao dịch gần đây (hết).
  *   Không render panel Ghi nhanh inline — mobile dùng FAB mở bottom Sheet.
  */
-export function DashboardClient({ categories, transactions, stats, categoryStats }: DashboardClientProps) {
+export function DashboardClient({ categories, transactions, stats }: DashboardClientProps) {
   const router = useRouter();
   const [editingTransaction, setEditingTransaction] = useState<TransactionWithCategory | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -170,9 +168,6 @@ export function DashboardClient({ categories, transactions, stats, categoryStats
                   </div>
                 )}
               </SectionCard>
-
-              {/* Chi tiêu theo nhóm — thông tin bổ trợ, đặt sau danh sách */}
-              <SpendingPieChart data={categoryStats} />
             </>
           }
           side={

@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import { getCategories, getTransactions, getMonthlyStats } from "@/actions/transaction";
 import { getBudgetProgress } from "@/actions/budget";
 import { getFamilyMembers } from "@/actions/family";
-import { getCategoryStats } from "@/actions/analytics";
 import { DashboardClient } from "@/components/dashboard/dashboard-client";
 import { getAppMonthRange } from "@/lib/app-time";
 import { WorkspaceLayout } from "@/components/layout/workspace-layout";
@@ -30,13 +29,12 @@ export default async function DashboardPage({
 
   // Ignore searchParams.from/to for dashboard to enforce current month view
 
-  const [categories, transactions, stats, familyMembers, budgetProgress, categoryStats] = await Promise.all([
+  const [categories, transactions, stats, familyMembers, budgetProgress] = await Promise.all([
     getCategories(),
     getTransactions(undefined, 0, { scope, categoryId, memberId, startDate, endDate }),
     getMonthlyStats(),
     getFamilyMembers(),
     getBudgetProgress(),
-    getCategoryStats(startDate, endDate, scope),
   ]);
 
   return (
@@ -50,7 +48,6 @@ export default async function DashboardPage({
         stats={stats}
         familyMembers={familyMembers}
         budgetProgress={budgetProgress}
-        categoryStats={categoryStats}
       />
     </WorkspaceLayout>
   );
