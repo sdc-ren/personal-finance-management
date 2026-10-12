@@ -42,9 +42,9 @@ interface DashboardClientProps {
 
 /**
  * Màn Tổng quan — đúng cấu trúc bản preview đã duyệt:
- * - Desktop: lưới `minmax(0,1fr) 326px`. Cột trái: KPI → Chi tiêu theo nhóm
- *   → Giao dịch gần đây. Cột phải: panel Ghi nhanh sticky.
- * - Mobile: một cột KPI → Chi tiêu theo nhóm → Giao dịch gần đây (hết).
+ * - Desktop: lưới `minmax(0,1fr) 326px`. Cột trái: KPI → Giao dịch gần đây
+ *   (trọng tâm) → Chi tiêu theo nhóm (bổ trợ). Cột phải: panel Ghi nhanh sticky.
+ * - Mobile: một cột KPI → Giao dịch gần đây → Chi tiêu theo nhóm (hết).
  *   Không render panel Ghi nhanh inline — mobile dùng FAB mở bottom Sheet.
  */
 export function DashboardClient({ categories, transactions, stats, categoryStats }: DashboardClientProps) {
@@ -149,10 +149,7 @@ export function DashboardClient({ categories, transactions, stats, categoryStats
                 />
               </KpiRow>
 
-              {/* Chi tiêu theo nhóm */}
-              <SpendingPieChart data={categoryStats} />
-
-              {/* Giao dịch gần đây */}
+              {/* Giao dịch gần đây — trọng tâm của trang */}
               <SectionCard
                 title="Giao dịch gần đây"
                 action={
@@ -173,6 +170,9 @@ export function DashboardClient({ categories, transactions, stats, categoryStats
                   </div>
                 )}
               </SectionCard>
+
+              {/* Chi tiêu theo nhóm — thông tin bổ trợ, đặt sau danh sách */}
+              <SpendingPieChart data={categoryStats} />
             </>
           }
           side={
