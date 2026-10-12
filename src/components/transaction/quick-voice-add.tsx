@@ -33,6 +33,7 @@ import { toast } from "sonner";
 import type { Category } from "@prisma/client";
 import { cn } from "@/lib/utils";
 import { formatNumber } from "@/lib/format-currency";
+import { relativeDayLabel } from "@/lib/app-time";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -82,20 +83,6 @@ function stripVoiceCommands(text: string): string {
     .replace(/\b(lưu|xong|ok|dừng|thôi|hết)\b/gi, " ")
     .replace(/\s+/g, " ")
     .trim();
-}
-
-function relativeDayLabel(date: Date): string {
-  const now = new Date();
-  const startOfDay = (d: Date) => {
-    const c = new Date(d);
-    c.setHours(0, 0, 0, 0);
-    return c.getTime();
-  };
-  const diff = Math.round((startOfDay(date) - startOfDay(now)) / 86_400_000);
-  if (diff === 0) return "Hôm nay";
-  if (diff === -1) return "Hôm qua";
-  if (diff === -2) return "Hôm kia";
-  return format(date, "EEEE, d/M", { locale: vi });
 }
 
 interface QuickVoiceAddProps {

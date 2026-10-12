@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Plus } from "lucide-react";
@@ -18,6 +18,7 @@ import { Page, PageHeader, KpiRow, ContentGrid } from "@/components/ui/page";
 // Match TransactionList requirements
 import { TransactionWithCategory } from "@/actions/transaction";
 import { isSameMonth, format } from "date-fns";
+import { groupByDay } from "@/lib/app-time";
 import { vi } from "date-fns/locale";
 
 export interface BudgetProgress {
@@ -96,7 +97,10 @@ export function DashboardClient({ categories, transactions, stats }: DashboardCl
   const isIncrease = expensePercent > 0;
   const isDecrease = expensePercent < 0;
 
-  const recentTransactions = transactions.slice(0, 5);
+  const groupedRecent = useMemo(
+    () => groupByDay(transactions.slice(0, 5)),
+    [transactions]
+  );
   const todayLabel = format(new Date(), "EEEE, d 'tháng' M", { locale: vi });
 
   return (
@@ -156,14 +160,21 @@ export function DashboardClient({ categories, transactions, stats }: DashboardCl
                   </Button>
                 }
               >
-                {recentTransactions.length === 0 ? (
+                {groupedRecent.length === 0 ? (
                   <p className="py-8 text-center text-sm text-muted-foreground">
                     Chưa có giao dịch nào trong tháng.
                   </p>
                 ) : (
                   <div className="flex flex-col">
-                    {recentTransactions.map((t) => (
-                      <TransactionItem key={t.id} transaction={t} onView={handleView} />
+                    {groupedRecent.map((group) => (
+                      <div key={group.key}>
+                        <p className="sticky top-0 bg-card px-1 pb-1 pt-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground first:pt-1">
+                          {group.label}
+                        </p>
+                        {group.items.map((t) => (
+                          <TransactionItem key={t.id} transaction={t} onView={handleView} />
+                        ))}
+                      </div>
                     ))}
                   </div>
                 )}

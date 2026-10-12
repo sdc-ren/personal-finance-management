@@ -1,3 +1,6 @@
+import { format } from "date-fns";
+import { vi } from "date-fns/locale";
+
 const APP_TIMEZONE_OFFSET_HOURS = 7;
 const APP_TIMEZONE_OFFSET_MS = APP_TIMEZONE_OFFSET_HOURS * 60 * 60 * 1000;
 
@@ -93,4 +96,44 @@ export function parseDateParam(value: string | undefined): Date | undefined {
   const parsed = new Date(value);
   if (Number.isNaN(parsed.getTime())) return undefined;
   return parsed;
+}
+
+/**
+ * Nhãn ngày tương đối cho hiển thị: "Hôm nay", "Hôm qua", "Hôm kia",
+ * hoặc "Thứ Hai, 12/10" cho các ngày xa hơn.
+ */
+export function relativeDayLabel(date: Date): string {
+  const startOfDay = (d: Date) => {
+    const c = new Date(d);
+    c.setHours(0, 0, 0, 0);
+    return c.getTime();
+  };
+  const diff = Math.round(
+    (startOfDay(date) - startOfDay(new Date())) / 86_400_000
+  );
+  if (diff === 0) return "Hôm nay";
+  if (diff === -1) return "Hôm qua";
+  if (diff === -2) return "Hôm kia";
+  return format(date, "EEEE, d/M", { locale: vi });
+}
+
+/**
+ * Gom danh sách có trường `date` theo từng ngày (ngày mới nhất trước),
+ * mỗi nhóm kèm nhãn hiển thị từ `relativeDayLabel`.
+ */
+export function groupByDay<T extends { date: Date }>(
+  items: T[]
+): { key: string; label: string; items: T[] }[] {
+  const groups = new Map<string, { label: string; items: T[] }>();
+  for (const item of items) {
+    const d = new Date(item.date);
+    const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    let g = groups.get(key);
+    if (!g) {
+      g = { label: relativeDayLabel(d), items: [] };
+      groups.set(key, g);
+    }
+    g.items.push(item);
+  }
+  return [...groups.entries()].map(([key, g]) => ({ key, ...g }));
 }
