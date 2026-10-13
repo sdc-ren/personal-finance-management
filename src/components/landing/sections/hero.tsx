@@ -36,11 +36,10 @@ function PhoneMockup() {
             Tổng quan
           </p>
           {/* KPI mini */}
-          <div className="grid grid-cols-3 gap-1.5">
+          <div className="grid grid-cols-2 gap-1.5">
             {[
               { l: "Thu nhập", v: "0₫", c: "text-emerald-600" },
               { l: "Đã chi", v: "465k", c: "text-rose-600" },
-              { l: "Còn lại", v: "−465k", c: "text-slate-700 dark:text-slate-300" },
             ].map((k) => (
               <div
                 key={k.l}

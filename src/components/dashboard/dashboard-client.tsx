@@ -133,8 +133,8 @@ export function DashboardClient({ categories, transactions, stats }: DashboardCl
           mainClassName="flex min-w-0 flex-col gap-4 lg:gap-5"
           main={
             <>
-              {/* Hàng KPI: mobile 2 cột, thẻ thứ 3 full-width */}
-              <KpiRow twoColOnMobile>
+              {/* Hàng KPI: 2 thẻ Thu nhập / Đã chi */}
+              <KpiRow className="grid-cols-2 sm:grid-cols-2">
                 <StatCard
                   label="Thu nhập"
                   tone="var(--pf-ok-ink)"
@@ -149,11 +149,6 @@ export function DashboardClient({ categories, transactions, stats }: DashboardCl
                       {expensePercent > 0 ? "+" : ""}{expensePercent}% so với tháng trước
                     </span>
                   }
-                />
-                <StatCard
-                  label="Còn lại"
-                  value={formatCurrency(stats.income - stats.expense)}
-                  className="col-span-2 sm:col-span-1"
                 />
               </KpiRow>
 
