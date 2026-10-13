@@ -25,6 +25,8 @@ export function WorkspaceTopBar() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const userName = session?.user?.name?.trim();
+  const pageTitle =
+    navItems.find((item) => isActivePath(pathname, item.href))?.label ?? "";
 
   return (
     <header className="relative z-30 shrink-0 border-b border-border bg-background/85 backdrop-blur-md">
@@ -35,6 +37,13 @@ export function WorkspaceTopBar() {
             PERSONAL FINANCE
           </span>
         </Link>
+
+        {/* Tiêu đề trang hiện tại — chỉ mobile (desktop đã có nav đánh dấu) */}
+        {pageTitle ? (
+          <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 text-sm font-semibold whitespace-nowrap text-foreground lg:hidden">
+            {pageTitle}
+          </span>
+        ) : null}
 
         <nav className="hidden items-center gap-1 lg:flex">
           {navItems.map((item) => {

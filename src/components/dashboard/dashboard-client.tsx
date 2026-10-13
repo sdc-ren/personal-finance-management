@@ -12,7 +12,7 @@ import { CountUpAnimation } from "@/components/ui/count-up-animation";
 import { TransactionDetailsModal } from "@/components/transaction/transaction-details-modal";
 import { StatCard, SectionCard } from "@/components/ui/finance";
 import { formatCurrency } from "@/lib/format-currency";
-import { Page, PageHeader, KpiRow, ContentGrid } from "@/components/ui/page";
+import { Page, KpiRow, ContentGrid } from "@/components/ui/page";
 
 // Match TransactionList requirements
 import { TransactionWithCategory } from "@/actions/transaction";
@@ -58,6 +58,8 @@ export function DashboardClient({ categories, transactions, stats }: DashboardCl
   useEffect(() => {
     prefetchQuickPresets();
   }, []);
+
+  const [typeFilter, setTypeFilter] = useState<"ALL" | "EXPENSE" | "INCOME">("ALL");
 
   const handleEdit = (transaction: TransactionWithCategory) => {
     setEditingTransaction(transaction);
@@ -109,28 +111,33 @@ export function DashboardClient({ categories, transactions, stats }: DashboardCl
 
   const todayLabel = format(new Date(), "EEEE, d 'tháng' M", { locale: vi });
 
+  // Lọc loại giao dịch cho "Giao dịch gần đây" (client-side, dữ liệu đã có sẵn)
+  const visibleTransactions =
+    typeFilter === "ALL"
+      ? transactions
+      : transactions.filter((t) => t.type === typeFilter);
+
   return (
     <>
-      <Page>
-        <PageHeader
-          title="Tổng quan tài chính"
-          description={todayLabel}
-          action={
-            <Button
-              type="button"
-              onClick={scrollToQuickAdd}
-              className="hidden bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 lg:inline-flex"
-            >
-              <Plus className="mr-1.5 h-4 w-4" /> Ghi nhanh
-            </Button>
-          }
-        />
+      <Page className="h-full min-h-0">
+        {/* Chỉ còn ngày tháng nhỏ — tiêu đề trang đã chuyển lên header */}
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-sm text-muted-foreground">{todayLabel}</p>
+          <Button
+            type="button"
+            onClick={scrollToQuickAdd}
+            className="hidden bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 lg:inline-flex"
+          >
+            <Plus className="mr-1.5 h-4 w-4" /> Ghi nhanh
+          </Button>
+        </div>
 
         <ContentGrid
           layout="fluid-326"
           sideSticky
           sideClassName="hidden lg:flex"
-          mainClassName="flex min-w-0 flex-col gap-4 lg:gap-5"
+          className="flex min-h-0 flex-1 flex-col lg:grid"
+          mainClassName="flex min-h-0 min-w-0 flex-1 flex-col gap-4 lg:gap-5"
           main={
             <>
               {/* Hàng KPI: 2 thẻ Thu nhập / Đã chi */}
@@ -152,9 +159,8 @@ export function DashboardClient({ categories, transactions, stats }: DashboardCl
                 />
               </KpiRow>
 
-              {/* Giao dịch gần đây — trọng tâm của trang: toàn bộ giao dịch từ
-                  đầu tháng tới hiện tại, chiều cao cố định theo màn hình,
-                  virtual scroll khi nhiều (dùng chung TransactionList). */}
+              {/* Giao dịch gần đây — mobile: lấp đầy màn hình trên thanh menu,
+                  không cuộn trang (list cuộn nội bộ); desktop giữ chiều cao cũ. */}
               <SectionCard
                 title="Giao dịch gần đây"
                 action={
@@ -162,10 +168,36 @@ export function DashboardClient({ categories, transactions, stats }: DashboardCl
                     <Link href="/transactions">Xem tất cả</Link>
                   </Button>
                 }
+                className="flex min-h-0 flex-1 flex-col"
+                contentClassName="flex min-h-0 flex-1 flex-col gap-3"
               >
-                <div className="h-[calc(100vh-360px)] h-[calc(100dvh-360px)] min-h-[320px]">
+                {/* Lọc theo loại giao dịch */}
+                <div className="grid grid-cols-3 gap-1 rounded-xl bg-muted p-1" role="group" aria-label="Lọc loại giao dịch">
+                  {(
+                    [
+                      { value: "ALL", label: "Tất cả" },
+                      { value: "EXPENSE", label: "Tiền ra" },
+                      { value: "INCOME", label: "Tiền vào" },
+                    ] as const
+                  ).map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setTypeFilter(opt.value)}
+                      aria-pressed={typeFilter === opt.value}
+                      className={
+                        typeFilter === opt.value
+                          ? "rounded-lg bg-white py-1.5 text-xs font-medium text-emerald-700 shadow-sm"
+                          : "rounded-lg py-1.5 text-xs font-medium text-muted-foreground"
+                      }
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="min-h-0 flex-1 lg:h-[calc(100dvh-360px)] lg:min-h-[320px] lg:flex-none">
                   <TransactionList
-                    transactions={transactions}
+                    transactions={visibleTransactions}
                     onEdit={handleEdit}
                     onView={handleView}
                     isFullPage
