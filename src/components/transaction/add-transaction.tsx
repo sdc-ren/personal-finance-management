@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
   SheetHeader,
@@ -179,6 +180,16 @@ export function AddTransaction({ categories, initialData, open: controlledOpen, 
           </SheetDescription>
         </SheetHeader>
         <AddTransactionBody categories={categories} initialData={initialData} onSuccess={onSuccess} />
+        {/* Nút đóng dưới cùng cho mobile: X ở góc trên khó với tới bằng ngón cái,
+            mà sheet lại chặn bấm ra ngoài để tránh mất dữ liệu đang ghi. */}
+        <SheetClose asChild>
+          <button
+            type="button"
+            className="mt-1 w-full cursor-pointer rounded-xl border border-border bg-card py-3 text-sm font-medium text-muted-foreground transition-colors active:scale-[0.99] hover:bg-accent"
+          >
+            Đóng
+          </button>
+        </SheetClose>
       </SheetContent>
     </Sheet>
   );
