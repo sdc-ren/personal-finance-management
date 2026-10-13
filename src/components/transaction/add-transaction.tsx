@@ -167,7 +167,7 @@ export function AddTransaction({ categories, initialData, open: controlledOpen, 
       )}
       <SheetContent
         side="bottom"
-        className="max-h-[95vh] rounded-t-2xl px-4 overflow-y-auto pb-[calc(1rem+env(safe-area-inset-bottom))]"
+        className="max-h-[95vh] max-h-[95dvh] rounded-t-2xl px-4 overflow-y-auto pb-[calc(1rem+env(safe-area-inset-bottom))]"
         onOpenAutoFocus={focusAmount}
         onPointerDownOutside={(e) => e.preventDefault()}
         onInteractOutside={(e) => e.preventDefault()}

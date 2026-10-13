@@ -163,7 +163,7 @@ export function DashboardClient({ categories, transactions, stats }: DashboardCl
                   </Button>
                 }
               >
-                <div className="h-[calc(100vh-360px)] min-h-[320px]">
+                <div className="h-[calc(100vh-360px)] h-[calc(100dvh-360px)] min-h-[320px]">
                   <TransactionList
                     transactions={transactions}
                     onEdit={handleEdit}
