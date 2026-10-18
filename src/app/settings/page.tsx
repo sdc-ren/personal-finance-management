@@ -5,6 +5,8 @@ import { getCategories } from "@/actions/transaction";
 import { getBudgetProgress } from "@/actions/budget";
 import { getSystemCategories } from "@/actions/admin";
 import { getQuickPresets } from "@/actions/quick-preset";
+import { getFamily } from "@/actions/family";
+import { FamilyManagement } from "@/components/family/family-management";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SectionCard } from "@/components/ui/finance";
 import { BudgetList } from "@/components/budget/budget-list";
@@ -30,11 +32,12 @@ export default async function SettingsPage({
 
   const isAdmin = session.user.role === "ADMIN";
 
-  const [categories, budgetProgress, systemCategories, quickPresets] = await Promise.all([
+  const [categories, budgetProgress, systemCategories, quickPresets, family] = await Promise.all([
     getCategories(),
     getBudgetProgress(),
     isAdmin ? getSystemCategories() : Promise.resolve([]),
     getQuickPresets(),
+    getFamily(),
   ]);
 
   const resolvedSearchParams = await searchParams;
@@ -51,7 +54,7 @@ export default async function SettingsPage({
       <Page>
         <PageHeader
           title="Cài đặt"
-          description="Quản lý ngân sách, nút ghi nhanh, danh mục và tài khoản."
+          description="Quản lý ngân sách, nút ghi nhanh, gia đình, danh mục và tài khoản."
         />
         <Tabs defaultValue={defaultTab} className="flex flex-col gap-4">
         <TabsList className={TAB_LIST_CLASS}>
@@ -63,6 +66,9 @@ export default async function SettingsPage({
           </TabsTrigger>
           <TabsTrigger value="quick-add" className={TAB_TRIGGER}>
             Nút ghi nhanh
+          </TabsTrigger>
+          <TabsTrigger value="family" className={TAB_TRIGGER}>
+            Gia đình
           </TabsTrigger>
           {isAdmin && (
             <TabsTrigger value="categories" className={TAB_TRIGGER}>
@@ -101,6 +107,10 @@ export default async function SettingsPage({
           <SectionCard title="Nút ghi nhanh">
             <QuickPresetManager categories={categories} initialPresets={quickPresets} />
           </SectionCard>
+        </TabsContent>
+
+        <TabsContent value="family">
+          <FamilyManagement initialFamily={family} />
         </TabsContent>
 
         {isAdmin && (

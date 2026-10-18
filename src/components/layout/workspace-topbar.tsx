@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, LayoutDashboard, Settings, Users, Wallet } from "lucide-react";
+import { BarChart3, LayoutDashboard, Settings, Wallet } from "lucide-react";
 import { UserNav } from "@/components/auth/user-nav";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { RingMark } from "@/components/brand/ring-mark";
@@ -13,7 +13,6 @@ const navItems = [
   { href: "/dashboard", label: "Tổng quan", icon: LayoutDashboard },
   { href: "/transactions", label: "Lịch sử", icon: Wallet },
   { href: "/reports", label: "Báo cáo", icon: BarChart3 },
-  { href: "/family", label: "Gia đình", icon: Users },
   { href: "/settings", label: "Cài đặt", icon: Settings },
 ];
 

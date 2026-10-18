@@ -74,7 +74,7 @@ export function SpendingAnalysis({ summary, categories }: SpendingAnalysisProps)
     };
 
     return (
-        <>
+        <div className="flex flex-col gap-4 lg:gap-5">
             {/* Summary Cards */}
             <KpiRow twoColOnMobile>
                 <StatCard label="Chi tiêu" tone="var(--pf-expense-ink)" value={formatCurrency(summary.expense)} />
@@ -197,6 +197,6 @@ export function SpendingAnalysis({ summary, categories }: SpendingAnalysisProps)
                     </div>
                 </div>
             </SectionCard>
-        </>
+        </div>
     );
 }

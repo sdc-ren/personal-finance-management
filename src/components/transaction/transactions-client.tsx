@@ -169,6 +169,7 @@ export function TransactionsClient({
           readOnly={scope === "family"}
           isLoading={isPending}
           isFullPage={true}
+          variant="flat"
         />
       </div>
 
