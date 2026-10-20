@@ -32,7 +32,7 @@ export function WorkspaceTopBar() {
       <div className="flex h-14 items-center justify-between gap-3 px-4 sm:px-6 lg:px-10 xl:px-14">
         <Link href="/dashboard" className="flex min-h-11 items-center gap-2.5">
           <RingMark className="h-7 w-7 shrink-0" />
-          <span className="hidden text-sm font-semibold tracking-wide whitespace-nowrap text-foreground min-[380px]:inline">
+          <span className="hidden text-sm font-semibold tracking-wide whitespace-nowrap text-foreground lg:inline">
             PERSONAL FINANCE
           </span>
         </Link>

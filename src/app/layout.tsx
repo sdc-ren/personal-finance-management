@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import "./nprogress.css";
 import { AuthProvider } from "@/components/providers/auth-provider";
@@ -7,10 +7,56 @@ import { ProgressBarProvider } from "@/components/providers/progress-bar-provide
 import { ThemeProvider, THEME_BOOTSTRAP } from "@/components/providers/theme-provider";
 import { pfFontVars } from "@/lib/fonts";
 
+const SITE_URL = "https://finance-dusky-five.vercel.app";
+const SITE_NAME = "Personal Finance";
+const SITE_DESCRIPTION =
+  "Ghi chi tiêu trong vài giây, đặt ngân sách theo danh mục, xem tiền tháng này đi đâu. Tiếng Việt, VND, miễn phí.";
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
+  ],
+};
+
 export const metadata: Metadata = {
-  title: "Personal Finance — Sổ dòng tiền của bạn",
-  description:
-    "Ghi chi tiêu trong vài giây, đặt ngân sách theo danh mục, xem tiền tháng này đi đâu. Tiếng Việt, VND, miễn phí.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Personal Finance — Sổ dòng tiền của bạn",
+    template: "%s · Personal Finance",
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  keywords: [
+    "quản lý tài chính cá nhân",
+    "ghi chi tiêu",
+    "ngân sách",
+    "sổ dòng tiền",
+    "personal finance",
+  ],
+  authors: [{ name: SITE_NAME }],
+  creator: SITE_NAME,
+  // icon.svg + apple-icon.png trong src/app được Next tự sinh thẻ <link>
+  openGraph: {
+    type: "website",
+    locale: "vi_VN",
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: "Personal Finance — Sổ dòng tiền của bạn",
+    description: SITE_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary",
+    title: "Personal Finance — Sổ dòng tiền của bạn",
+    description: SITE_DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  formatDetection: {
+    telephone: false,
+  },
 };
 
 export default function RootLayout({
